@@ -19,16 +19,10 @@
  */
 
 
-#ifndef INCLUDED_CRYPTO_SYM_CIPH_DESC_H
-#define INCLUDED_CRYPTO_SYM_CIPH_DESC_H
+#ifndef INCLUDED_CRYPTO_GENERATE_RAND_KEY_H
+#define INCLUDED_CRYPTO_GENERATE_RAND_KEY_H
 
 #include <crypto/api.h>
-#include <openssl/conf.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-#include <fstream>
-#include <stdexcept>
-
 
 namespace gr {
   namespace crypto {
@@ -37,24 +31,16 @@ namespace gr {
      * \brief <+description+>
      *
      */
-    class CRYPTO_API sym_ciph_desc
+    class CRYPTO_API generate_rand_key
     {
     public:
-       typedef boost::shared_ptr<sym_ciph_desc> sptr;
-
-       sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename);
-       ~sym_ciph_desc();
-        const EVP_CIPHER* get_evp_ciph(){return d_evp_ciph;};
-        bool get_padding(){return d_padding;};
-        void get_key(std::vector<unsigned char> &key);
+      generate_rand_key(const std::string keyfilename, int keylen);
+      ~generate_rand_key();
     private:
-        const EVP_CIPHER *d_evp_ciph;
-        bool d_padding;
-        std::string d_keyfilename;
     };
 
   } // namespace crypto
 } // namespace gr
 
-#endif /* INCLUDED_CRYPTO_SYM_CIPH_DESC_H */
+#endif /* INCLUDED_CRYPTO_GENERATE_RAND_KEY_H */
 

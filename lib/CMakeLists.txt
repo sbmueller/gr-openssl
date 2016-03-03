@@ -25,12 +25,11 @@ include(GrPlatform) #define LIB_SUFFIX
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(${OPENSSL_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
 list(APPEND crypto_sources
     sym_enc_tagged_bb_impl.cc
-    sym_dec_tagged_bb_impl.cc
     sym_ciph_desc.cc
-)
+    generate_rand_key.cc
+    crypt_helper.cc )
 
 set(crypto_sources "${crypto_sources}" PARENT_SCOPE)
 if(NOT crypto_sources)

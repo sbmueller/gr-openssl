@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<block>
+  <name>generate_rand_key</name>
+  <key>crypto_generate_rand_key</key>
+  <category>crypto</category>
+  <import>import crypto</import>
+  <make>crypto.generate_rand_key($keyfilename, $keylen)</make>
+
+  <param>
+    <name>Keyfile</name>
+    <key>keyfilename</key>
+    <type>string</type>
+  </param>
+
+  <param>
+    <name>key length in byte</name>
+    <key>keylen</key>
+    <type>int</type>
+  </param>
+
+</block>

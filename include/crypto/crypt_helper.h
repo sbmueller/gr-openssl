@@ -19,16 +19,16 @@
  */
 
 
-#ifndef INCLUDED_CRYPTO_SYM_CIPH_DESC_H
-#define INCLUDED_CRYPTO_SYM_CIPH_DESC_H
+#ifndef INCLUDED_CRYPTO_CRYPT_HELPER_H
+#define INCLUDED_CRYPTO_CRYPT_HELPER_H
 
 #include <crypto/api.h>
+#include <fstream>
+#include <stdexcept>
 #include <openssl/conf.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
-#include <fstream>
-#include <stdexcept>
-
+#include <openssl/rand.h>
 
 namespace gr {
   namespace crypto {
@@ -37,24 +37,21 @@ namespace gr {
      * \brief <+description+>
      *
      */
-    class CRYPTO_API sym_ciph_desc
+    class CRYPTO_API crypt_helper
     {
     public:
-       typedef boost::shared_ptr<sym_ciph_desc> sptr;
+      crypt_helper();
+      ~crypt_helper();
 
-       sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename);
-       ~sym_ciph_desc();
-        const EVP_CIPHER* get_evp_ciph(){return d_evp_ciph;};
-        bool get_padding(){return d_padding;};
-        void get_key(std::vector<unsigned char> &key);
+      static void gen_rand_bytes(unsigned char *b, int len);
+      static void read_key_file(const std::string filename,unsigned char *key, int keylen);
+      static void write_key_file(const std::string filename,unsigned char *key, int keylen);
+
     private:
-        const EVP_CIPHER *d_evp_ciph;
-        bool d_padding;
-        std::string d_keyfilename;
     };
 
   } // namespace crypto
 } // namespace gr
 
-#endif /* INCLUDED_CRYPTO_SYM_CIPH_DESC_H */
+#endif /* INCLUDED_CRYPTO_CRYPT_HELPER_H */
 

@@ -16,9 +16,8 @@
 # along with GNU Radio; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-
 install(FILES
+    crypto_sym_ciph_desc.xml
     crypto_sym_enc_tagged_bb.xml
-    crypto_sym_dec_tagged_bb.xml
-    crypto_sym_ciph_desc.xml DESTINATION share/gnuradio/grc/blocks
+    crypto_generate_rand_key.xml DESTINATION share/gnuradio/grc/blocks
 )

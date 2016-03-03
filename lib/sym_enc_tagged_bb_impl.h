@@ -32,41 +32,40 @@
 
 
 namespace gr {
-  namespace crypto {
+    namespace crypto {
 
-    class sym_enc_tagged_bb_impl : public sym_enc_tagged_bb
-    {
-     private:
-        const EVP_CIPHER* d_ciph;
-        EVP_CIPHER_CTX* d_ciph_ctx;
+        class sym_enc_tagged_bb_impl : public sym_enc_tagged_bb {
+        private:
+            const EVP_CIPHER *d_ciph;
+            EVP_CIPHER_CTX *d_ciph_ctx;
 
+            std::vector<unsigned char> d_key;
+            std::vector<unsigned char> d_iv;
 
-        std::vector<unsigned char> d_key;
-        std::vector<unsigned char> d_iv;
+            int d_key_len;
+            int d_iv_len;
+            int d_block_size;
 
-        int d_key_len;
-        int d_iv_len;
-        int d_block_size;
+            pmt::pmt_t d_iv_tagkey;
+            pmt::pmt_t d_iv_pmt;
+            pmt::pmt_t d_new_iv_tagkey;
 
-        pmt::pmt_t d_iv_key;
-        pmt::pmt_t d_iv_pmt;
-        pmt::pmt_t d_new_iv_key;
+        protected:
+            int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
-    protected:
-      int calculate_output_stream_length(const gr_vector_int &ninput_items);
+        public:
+            sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &key_len);
 
-     public:
-      sym_enc_tagged_bb_impl(const std::string keyfilename, const std::string cipher, const std::string& key_len);
-      ~sym_enc_tagged_bb_impl();
+            ~sym_enc_tagged_bb_impl();
 
-      // Where all the action really happens
-      int work(int noutput_items,
-           gr_vector_int &ninput_items,
-           gr_vector_const_void_star &input_items,
-           gr_vector_void_star &output_items);
-    };
+            // Where all the action really happens
+            int work(int noutput_items,
+                     gr_vector_int &ninput_items,
+                     gr_vector_const_void_star &input_items,
+                     gr_vector_void_star &output_items);
+        };
 
-  } // namespace crypto
+    } // namespace crypto
 } // namespace gr
 
 #endif /* INCLUDED_CRYPTO_SYM_ENC_TAGGED_BB_IMPL_H */

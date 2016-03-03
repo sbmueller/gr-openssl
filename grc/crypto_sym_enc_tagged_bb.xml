@@ -4,20 +4,16 @@
   <key>crypto_sym_enc_tagged_bb</key>
   <category>crypto</category>
   <import>import crypto</import>
-  <make>crypto.sym_enc_tagged_bb($keyfile, $cipher, $key_len)</make>
+  <make>crypto.sym_enc_tagged_bb(self.$(cipher()), $key_len)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
-  <param>
-    <name>keyfile</name>
-    <key>keyfile</key>
-    <type>string</type>
-  </param>
+       * type
+       -->
 
   <param>
-    <name>cipher</name>
+    <name>cipher description</name>
     <key>cipher</key>
     <type>string</type>
   </param>

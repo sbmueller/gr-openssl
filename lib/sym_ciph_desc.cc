@@ -24,26 +24,33 @@
 
 #include <gnuradio/io_signature.h>
 #include <crypto/sym_ciph_desc.h>
-#include <stdexcept>
 
 namespace gr {
-  namespace crypto {
+    namespace crypto {
 
-    sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding)
-    {
-        ERR_load_crypto_strings();
-        OpenSSL_add_all_ciphers();
-        OPENSSL_config(NULL);
+        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename) {
+            ERR_load_crypto_strings();
+            OpenSSL_add_all_ciphers();
+            OPENSSL_config(NULL);
 
-        d_evp_ciph = EVP_get_cipherbyname(ciph_name.c_str());
-        if(d_evp_ciph == NULL) throw std::runtime_error("cipher not found");
-        d_padding = padding;
-    }
+            d_evp_ciph = EVP_get_cipherbyname(ciph_name.c_str());
+            if (d_evp_ciph == NULL) throw std::runtime_error("cipher not found");
+            d_padding = padding;
+            d_keyfilename = keyfilename;
 
-    sym_ciph_desc::~sym_ciph_desc()
-    {
-    }
+        }
 
-  } /* namespace crypto */
+        void
+        sym_ciph_desc::get_key(std::vector<unsigned char> &key) {
+            std::ifstream keyfile(d_keyfilename.c_str());
+            if (!(keyfile.is_open())) { throw std::runtime_error("key file not found"); }
+            keyfile.read((char *) &key[0], d_evp_ciph->key_len);
+            keyfile.close();
+        }
+
+        sym_ciph_desc::~sym_ciph_desc() {
+        }
+
+    } /* namespace crypto */
 } /* namespace gr */
 

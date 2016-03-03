@@ -23,6 +23,7 @@
 install(FILES
     api.h
     sym_enc_tagged_bb.h
-    sym_dec_tagged_bb.h
-    sym_ciph_desc.h DESTINATION include/crypto
+    sym_ciph_desc.h
+    generate_rand_key.h
+    crypt_helper.h DESTINATION include/crypto
 )
