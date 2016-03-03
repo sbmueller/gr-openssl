@@ -1,0 +1,138 @@
+/* -*- c++ -*- */
+/* 
+ * Copyright 2016 <+YOU OR YOUR COMPANY+>.
+ * 
+ * This is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3, or (at your option)
+ * any later version.
+ * 
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <gnuradio/io_signature.h>
+#include "sym_enc_tagged_bb_impl.h"
+
+namespace gr {
+  namespace crypto {
+
+    sym_enc_tagged_bb::sptr
+    sym_enc_tagged_bb::make(const std::string keyfile, const std::string cipher, const std::string& key_len)
+    {
+      return gnuradio::get_initial_sptr
+        (new sym_enc_tagged_bb_impl(keyfile, cipher, key_len));
+    }
+
+    /*
+     * The private constructor
+     */
+    sym_enc_tagged_bb_impl::sym_enc_tagged_bb_impl(const std::string keyfilename, const std::string cipher, const std::string& key_len)
+      : gr::tagged_stream_block("sym_enc_tagged_bb",
+              gr::io_signature::make(1, 1, sizeof(unsigned char)),
+              gr::io_signature::make(1, 1, sizeof(unsigned char)), key_len)
+    {
+        sym_ciph_desc* desc= new sym_ciph_desc("aes-256-cbc", false);//TODO: make variabel
+
+        d_ciph = desc->get_evp_ciph();
+        d_key_len = d_ciph->key_len;
+        d_iv_len = d_ciph->iv_len;
+        d_block_size = d_ciph->block_size;
+
+        d_key.resize(d_key_len);
+        d_iv.resize(d_iv_len);
+
+        std::ifstream keyfile(keyfilename.c_str());
+        if(!(keyfile.is_open())) {throw std::runtime_error("key file not found");}
+        keyfile.read((char*)&d_key[0], d_key_len);
+        keyfile.close();
+
+
+        d_ciph_ctx = EVP_CIPHER_CTX_new();
+        RAND_bytes(&d_iv[0], d_ciph->iv_len);
+        if(!EVP_EncryptInit_ex(d_ciph_ctx,d_ciph,NULL,&d_key[0],&d_iv[0])) { ERR_print_errors_fp(stdout);};
+        if(!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout);};
+
+        //no padding in this block
+        if(desc->get_padding()==true) throw std::runtime_error("no padding allowed in tagged stream encryption");
+
+        d_iv_key = pmt::mp("iv");
+        d_iv_pmt = pmt::init_u8vector(d_iv_len, d_iv);
+        d_new_iv_key = pmt::mp("new_iv");
+    }
+
+    /*
+     * Our virtual destructor.
+     */
+    sym_enc_tagged_bb_impl::~sym_enc_tagged_bb_impl()
+    {
+        d_key.assign(d_key_len,0);
+        EVP_CIPHER_CTX_free(d_ciph_ctx);
+    }
+
+    int
+    sym_enc_tagged_bb_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
+    {
+      return d_block_size;
+    }
+
+    int
+    sym_enc_tagged_bb_impl::work (int noutput_items,
+                       gr_vector_int &ninput_items,
+                       gr_vector_const_void_star &input_items,
+                       gr_vector_void_star &output_items)
+    {
+      const unsigned char *in = (const unsigned char *) input_items[0];
+      unsigned char *out = (unsigned char *) output_items[0];
+
+
+      std::vector <gr::tag_t> v;
+      get_tags_in_window(v, 0, 0, ninput_items[0], d_new_iv_key);
+
+     if(v.size()){
+         pmt::pmt_t p = v.front().value;
+
+         bool test = pmt::is_u8vector(p);
+         const std::vector<uint8_t> t2 = pmt_u8vector_elements(p);
+
+         if(false/*pmt::is_u8vector(p)/* && pmt::pmt_u8vector_elements(p).size()==d_iv_len*/){
+            d_iv = pmt::pmt_u8vector_elements(p);
+         }else{
+            RAND_bytes(&d_iv[0], d_iv_len);
+         }
+         d_iv_pmt = pmt::init_u8vector(d_iv_len, d_iv);
+
+         if(!EVP_EncryptInit_ex(d_ciph_ctx,d_ciph,NULL,&d_key[0],&d_iv[0])) { ERR_print_errors_fp(stdout);};
+         if(!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout);};
+
+         add_item_tag(0,nitems_read(0),d_iv_key,d_iv_pmt);
+      }
+      else if(nitems_read(0)==0){
+          add_item_tag(0,nitems_read(0),d_iv_key,d_iv_pmt);
+      }
+
+
+
+      if(ninput_items[0] != d_block_size) throw std::runtime_error("wrong block size at input of encryption");
+
+      if(!EVP_EncryptUpdate(d_ciph_ctx,out,&noutput_items,in,d_block_size)){ ERR_print_errors_fp(stdout);};
+
+      //if(noutput_items != d_block_size) throw std::runtime_error("wrong block size at output of encryption");
+
+      return noutput_items;
+    }
+
+  } /* namespace crypto */
+} /* namespace gr */
+
