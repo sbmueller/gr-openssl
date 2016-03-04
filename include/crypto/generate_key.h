@@ -19,39 +19,29 @@
  */
 
 
-#ifndef INCLUDED_CRYPTO_SYM_DEC_TAGGED_BB_H
-#define INCLUDED_CRYPTO_SYM_DEC_TAGGED_BB_H
+#ifndef INCLUDED_CRYPTO_GENERATE_KEY_H
+#define INCLUDED_CRYPTO_GENERATE_KEY_H
 
 #include <crypto/api.h>
-#include <gnuradio/tagged_stream_block.h>
-#include <crypto/sym_ciph_desc.h>
 
 namespace gr {
   namespace crypto {
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup crypto
+     * \brief <+description+>
      *
      */
-    class CRYPTO_API sym_dec_tagged_bb : virtual public gr::tagged_stream_block
+    class CRYPTO_API generate_key
     {
-     public:
-      typedef boost::shared_ptr<sym_dec_tagged_bb> sptr;
-
-      /*!
-       * \brief Return a shared_ptr to a new instance of crypto::sym_dec_tagged_bb.
-       *
-       * To avoid accidental use of raw pointers, crypto::sym_dec_tagged_bb's
-       * constructor is in a private implementation
-       * class. crypto::sym_dec_tagged_bb::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(sym_ciph_desc &desc, const std::string &packet_len_tag);
+    public:
+        generate_key(const std::string &keyfilename, int keylen, const std::string &pass );
+        generate_key(const std::string &keyfilename, int keylen);
+      ~generate_key();
+    private:
     };
 
   } // namespace crypto
 } // namespace gr
 
-#endif /* INCLUDED_CRYPTO_SYM_DEC_TAGGED_BB_H */
+#endif /* INCLUDED_CRYPTO_GENERATE_KEY_H */
 

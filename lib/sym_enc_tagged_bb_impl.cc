@@ -29,30 +29,28 @@ namespace gr {
     namespace crypto {
 
         sym_enc_tagged_bb::sptr
-        sym_enc_tagged_bb::make(sym_ciph_desc &ciph_desc, const std::string &key_len) {
+        sym_enc_tagged_bb::make(sym_ciph_desc &ciph_desc, const std::string &packet_len_key) {
             return gnuradio::get_initial_sptr
-                    (new sym_enc_tagged_bb_impl(ciph_desc, key_len));
+                    (new sym_enc_tagged_bb_impl(ciph_desc, packet_len_key));
         }
 
         /*
          * The private constructor
          */
-        sym_enc_tagged_bb_impl::sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &key_len)
+        sym_enc_tagged_bb_impl::sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_key)
                 : gr::tagged_stream_block("sym_enc_tagged_bb",
                                           gr::io_signature::make(1, 1, sizeof(unsigned char)),
-                                          gr::io_signature::make(1, 1, sizeof(unsigned char)), key_len) {
+                                          gr::io_signature::make(1, 1, sizeof(unsigned char)), packet_len_key) {
             sym_ciph_desc *desc = &ciph_desc;
 
             d_ciph = desc->get_evp_ciph();
-            d_key_len = d_ciph->key_len;
-            d_iv_len = d_ciph->iv_len;
-            d_block_size = d_ciph->block_size;
-            d_key.resize(d_key_len);
-            d_iv.resize(d_iv_len);
+            d_key.resize(d_ciph->key_len);
+            d_iv.resize(d_ciph->iv_len);
+
             desc->get_key(d_key);
 
             d_ciph_ctx = EVP_CIPHER_CTX_new();
-            RAND_bytes(&d_iv[0], d_iv_len);
+            RAND_bytes(&d_iv[0], d_ciph->iv_len);
             if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) { ERR_print_errors_fp(stdout); };
             if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout); };
 
@@ -61,7 +59,7 @@ namespace gr {
                 throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks");
 
             d_iv_tagkey = pmt::mp("iv");
-            d_iv_pmt = pmt::init_u8vector(d_iv_len, d_iv);
+            d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
             d_new_iv_tagkey = pmt::mp("new_iv");
         }
 
@@ -70,13 +68,13 @@ namespace gr {
          * Our virtual destructor.
          */
         sym_enc_tagged_bb_impl::~sym_enc_tagged_bb_impl() {
-            d_key.assign(d_key_len, 0);
+            d_key.assign(d_ciph->key_len, 0);
             EVP_CIPHER_CTX_free(d_ciph_ctx);
         }
 
         int
         sym_enc_tagged_bb_impl::calculate_output_stream_length(const gr_vector_int &ninput_items) {
-            return d_block_size;
+            return d_ciph->block_size;
         }
 
         int
@@ -98,11 +96,11 @@ namespace gr {
                    d_iv = pmt::pmt_u8vector_elements(p);
                 }else{
                    RAND_bytes(&d_iv[0], d_iv_len);
-                }
-                */
+                }*/
 
-                RAND_bytes(&d_iv[0], d_iv_len);
-                d_iv_pmt = pmt::init_u8vector(d_iv_len, d_iv);
+
+                RAND_bytes(&d_iv[0], d_ciph->iv_len);
+                d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
                 if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                     ERR_print_errors_fp(stdout);
                 };
@@ -115,9 +113,9 @@ namespace gr {
             }
 
 
-            if (ninput_items[0] != d_block_size) throw std::runtime_error("wrong block size at input of encryption");
+            if (ninput_items[0] != d_ciph->block_size) throw std::runtime_error("wrong block size at input of encryption");
 
-            if (!EVP_EncryptUpdate(d_ciph_ctx, out, &noutput_items, in, d_block_size)) { ERR_print_errors_fp(stdout); };
+            if (!EVP_EncryptUpdate(d_ciph_ctx, out, &noutput_items, in, d_ciph->block_size)) { ERR_print_errors_fp(stdout); };
 
             //if(noutput_items != d_block_size) throw std::runtime_error("wrong block size at output of encryption");
 

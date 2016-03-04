@@ -4,29 +4,24 @@
   <key>crypto_sym_dec_tagged_bb</key>
   <category>crypto</category>
   <import>import crypto</import>
-  <make>crypto.sym_dec_tagged_bb($keyfile, $cipher, $key_len)</make>
+  <make>crypto.sym_dec_tagged_bb($cipher, $packet_key_len)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>keyfile</name>
-    <key>keyfile</key>
-    <type>string</type>
-  </param>
-
-  <param>
-    <name>cipher</name>
+    <name>cipher description</name>
     <key>cipher</key>
     <type>string</type>
   </param>
 
   <param>
     <name>packet length key</name>
-    <key>key_len</key>
+    <key>packet_key_len</key>
     <type>string</type>
   </param>
+
   <!-- Make one 'sink' node per input. Sub-nodes:
        * name (an identifier for the GUI)
        * type

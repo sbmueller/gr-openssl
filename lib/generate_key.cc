@@ -23,30 +23,29 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-#include <crypto/sym_ciph_desc.h>
+#include <crypto/generate_key.h>
 #include <crypto/crypt_helper.h>
 
 namespace gr {
     namespace crypto {
 
-        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename) {
-            ERR_load_crypto_strings();
-            OpenSSL_add_all_ciphers();
-            OPENSSL_config(NULL);
-
-            d_evp_ciph = EVP_get_cipherbyname(ciph_name.c_str());
-            if (d_evp_ciph == NULL) throw std::runtime_error("cipher not found");
-            d_padding = padding;
-            d_keyfilename = keyfilename;
-
+        generate_key::generate_key(const std::string &keyfilename, int keylen) {
+            std::vector<unsigned char> key(keylen, 0);
+            crypt_helper::gen_rand_bytes(&key[0], keylen);
+            crypt_helper::write_key_file(keyfilename, &key[0], keylen);
+            printf("Write key to keyfile %s\n", keyfilename.c_str());
         }
 
-        void
-        sym_ciph_desc::get_key(std::vector<unsigned char> &key) {
-            crypt_helper::read_key_file(d_keyfilename, &key[0], d_evp_ciph->key_len);
+        generate_key::generate_key(const std::string &keyfilename, int keylen, const std::string &password) {
+            std::vector<unsigned char> key(keylen, 0);
+            //TODO: variabel, salt
+            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 10000, EVP_sha256(), keylen,
+                                   &key[0])) { ERR_print_errors_fp(stdout); };
+            crypt_helper::write_key_file(keyfilename, &key[0], keylen);
+            printf("Write key to keyfile %s\n", keyfilename.c_str());
         }
 
-        sym_ciph_desc::~sym_ciph_desc() {
+        generate_key::~generate_key() {
         }
 
     } /* namespace crypto */

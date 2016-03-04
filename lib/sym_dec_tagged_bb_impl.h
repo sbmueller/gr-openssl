@@ -22,6 +22,13 @@
 #define INCLUDED_CRYPTO_SYM_DEC_TAGGED_BB_IMPL_H
 
 #include <crypto/sym_dec_tagged_bb.h>
+#include <crypto/sym_ciph_desc.h>
+#include <fstream>
+#include <stdexcept>
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
 
 namespace gr {
   namespace crypto {
@@ -29,13 +36,21 @@ namespace gr {
     class sym_dec_tagged_bb_impl : public sym_dec_tagged_bb
     {
      private:
-      // Nothing to declare in this block.
+        const EVP_CIPHER *d_ciph;
+        EVP_CIPHER_CTX *d_ciph_ctx;
+
+        std::vector<unsigned char> d_key;
+        std::vector<unsigned char> d_iv;
+
+        pmt::pmt_t d_iv_tagkey;
+
+        bool d_have_iv;
 
      protected:
       int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
      public:
-      sym_dec_tagged_bb_impl(const std::string keyfile, const std::string cipher, const std::string& key_len);
+      sym_dec_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_tag);
       ~sym_dec_tagged_bb_impl();
 
       // Where all the action really happens

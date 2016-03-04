@@ -44,8 +44,8 @@ namespace gr {
       ~crypt_helper();
 
       static void gen_rand_bytes(unsigned char *b, int len);
-      static void read_key_file(const std::string filename,unsigned char *key, int keylen);
-      static void write_key_file(const std::string filename,unsigned char *key, int keylen);
+      static void read_key_file(const std::string filename, unsigned char *key, int keylen);
+      static void write_key_file(const std::string filename, unsigned char *key, int keylen);
 
     private:
     };

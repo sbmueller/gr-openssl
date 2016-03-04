@@ -32,7 +32,6 @@ class qa_sym_enc_tagged_bb (gr_unittest.TestCase):
         self.tb = None
 
     def test_001_t (self):
-        # set up fg
         self.tb.run ()
         # check data
 

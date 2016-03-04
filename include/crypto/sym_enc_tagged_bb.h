@@ -25,7 +25,6 @@
 #include <crypto/api.h>
 #include <gnuradio/tagged_stream_block.h>
 #include <crypto/sym_ciph_desc.h>
-#include <boost/shared_ptr.hpp>
 
 namespace gr {
     namespace crypto {
@@ -47,7 +46,7 @@ namespace gr {
              * class. crypto::sym_enc_tagged_bb::make is the public interface for
              * creating new instances.
              */
-            static sptr make(sym_ciph_desc &ciph_desc, const std::string &key_len);
+            static sptr make(sym_ciph_desc &ciph_desc, const std::string &packet_len_key);
         };
 
     } // namespace crypto

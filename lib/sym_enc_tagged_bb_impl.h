@@ -42,10 +42,6 @@ namespace gr {
             std::vector<unsigned char> d_key;
             std::vector<unsigned char> d_iv;
 
-            int d_key_len;
-            int d_iv_len;
-            int d_block_size;
-
             pmt::pmt_t d_iv_tagkey;
             pmt::pmt_t d_iv_pmt;
             pmt::pmt_t d_new_iv_tagkey;
@@ -54,7 +50,7 @@ namespace gr {
             int calculate_output_stream_length(const gr_vector_int &ninput_items);
 
         public:
-            sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &key_len);
+            sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_key);
 
             ~sym_enc_tagged_bb_impl();
 
