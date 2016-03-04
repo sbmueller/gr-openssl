@@ -21,5 +21,7 @@ install(FILES
     crypto_generate_key_pass.xml
     crypto_sym_ciph_desc.xml
     crypto_sym_enc_tagged_bb.xml
-    crypto_sym_dec_tagged_bb.xml DESTINATION share/gnuradio/grc/blocks
+    crypto_sym_dec_tagged_bb.xml
+    crypto_sym_enc.xml
+    crypto_sym_dec.xml DESTINATION share/gnuradio/grc/blocks
 )

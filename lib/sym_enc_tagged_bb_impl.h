@@ -23,12 +23,7 @@
 
 #include <crypto/sym_enc_tagged_bb.h>
 #include <crypto/sym_ciph_desc.h>
-#include <fstream>
 #include <stdexcept>
-#include <openssl/conf.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-#include <openssl/rand.h>
 
 
 namespace gr {
@@ -51,8 +46,9 @@ namespace gr {
 
         public:
             sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_key);
-
             ~sym_enc_tagged_bb_impl();
+
+            void get_iv(std::vector<unsigned char> &iv) { iv = d_iv; }
 
             // Where all the action really happens
             int work(int noutput_items,

@@ -30,7 +30,9 @@ list(APPEND crypto_sources
 	crypt_helper.cc
     sym_enc_tagged_bb_impl.cc
 	sym_dec_tagged_bb_impl.cc
-    sym_ciph_desc.cc)
+    sym_ciph_desc.cc
+    sym_enc_impl.cc
+    sym_dec_impl.cc)
 
 
 set(crypto_sources "${crypto_sources}" PARENT_SCOPE)

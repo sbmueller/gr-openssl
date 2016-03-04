@@ -24,7 +24,6 @@
 
 #include <gnuradio/io_signature.h>
 #include <crypto/sym_ciph_desc.h>
-#include <crypto/crypt_helper.h>
 
 namespace gr {
     namespace crypto {
@@ -48,7 +47,7 @@ namespace gr {
 
             if (!d_random_iv) {
                 if (iv.size() != d_evp_ciph->iv_len)
-                    printf("WARNING length(%i) of given iv wrong\n", (int)iv.size());
+                    printf("WARNING length(%i) of given iv is wrong\n", (int)iv.size());
                 d_start_iv = iv;
             }
         }

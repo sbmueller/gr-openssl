@@ -23,35 +23,36 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-#include <crypto/crypt_helper.h>
-#include <openssl/conf.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-#include <openssl/rand.h>
+#include "sym_enc_impl.h"
+
 
 namespace gr {
   namespace crypto {
 
-    crypt_helper::crypt_helper()
+    sym_enc::sptr
+    sym_enc::make(sym_ciph_desc &ciph_desc)
+    {
+      return gnuradio::get_initial_sptr
+        (new sym_enc_impl(ciph_desc));
+    }
+
+    /*
+     * The private constructor
+     */
+    sym_enc_impl::sym_enc_impl(sym_ciph_desc &ciph_desc)
+      : gr::block("sym_enc",
+              gr::io_signature::make(0,0,0),
+              gr::io_signature::make(0,0,0))
+    {}
+
+    /*
+     * Our virtual destructor.
+     */
+    sym_enc_impl::~sym_enc_impl()
     {
     }
 
-    crypt_helper::~crypt_helper()
-    {
-    }
-
-    void crypt_helper::read_key_file(const std::string filename, unsigned char *key, int keylen){
-        std::ifstream keyfile(filename.c_str(),std::ios::in | std::ios::binary);
-        if (!(keyfile.is_open())) { throw std::runtime_error("key file read error"); }
-        keyfile.read((char *) &key[0], keylen);
-        keyfile.close();
-    }
-    void crypt_helper::write_key_file(const std::string filename, unsigned char *key, int keylen){
-        std::ofstream keyfile(filename.c_str(), std::ios::out | std::ios::binary);
-        if (!(keyfile.is_open())) { throw std::runtime_error("key file write error"); }
-        keyfile.write((char *) &key[0], keylen);
-        keyfile.close();
-    }
+   
 
   } /* namespace crypto */
 } /* namespace gr */

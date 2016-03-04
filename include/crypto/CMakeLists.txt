@@ -26,5 +26,7 @@ install(FILES
     generate_key.h
     sym_enc_tagged_bb.h
     sym_dec_tagged_bb.h
-    sym_ciph_desc.h DESTINATION include/crypto
+    sym_ciph_desc.h
+    sym_enc.h
+    sym_dec.h DESTINATION include/crypto
 )

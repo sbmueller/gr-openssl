@@ -1,0 +1,16 @@
+<testsuite errors="0" failures="1" name="unittest.suite.TestSuite" tests="1" time="0.004">
+  <testcase classname="__main__.qa_sym_enc" name="test_001_t" time="0.0037">
+    <failure type="exceptions.AssertionError">[67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67, 67] != (67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L, 67L)
+  File "/usr/lib/python2.7/unittest/case.py", line 331, in run
+    testMethod()
+  File "/home/maier/projects/gr-crypto/python/qa_sym_enc.py", line 65, in test_001_t
+    self.assertEqual(plain, decrypted)
+  File "/usr/lib/python2.7/unittest/case.py", line 515, in assertEqual
+    assertion_func(first, second, msg=msg)
+  File "/usr/lib/python2.7/unittest/case.py", line 508, in _baseAssertEqual
+    raise self.failureException(msg)
+    </failure>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
