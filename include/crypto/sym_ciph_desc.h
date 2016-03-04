@@ -31,29 +31,38 @@
 
 
 namespace gr {
-  namespace crypto {
+    namespace crypto {
 
-    /*!
-     * \brief <+description+>
-     *
-     */
-    class CRYPTO_API sym_ciph_desc
-    {
-    public:
-       typedef boost::shared_ptr<sym_ciph_desc> sptr;
+        /*!
+         * \brief <+description+>
+         *
+         */
+        class CRYPTO_API sym_ciph_desc
+        {
+        public:
+            typedef boost::shared_ptr<sym_ciph_desc> sptr;
 
-       sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename);
-       ~sym_ciph_desc();
-        const EVP_CIPHER* get_evp_ciph(){return d_evp_ciph;};
-        bool get_padding(){return d_padding;};
-        void get_key(std::vector<unsigned char> &key);
-    private:
-        const EVP_CIPHER *d_evp_ciph;
-        bool d_padding;
-        std::string d_keyfilename;
-    };
+            sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename, bool random_iv, const std::vector<unsigned char>  &iv);
 
-  } // namespace crypto
+            ~sym_ciph_desc();
+
+            const EVP_CIPHER *get_evp_ciph() { return d_evp_ciph; };
+
+            bool get_padding() { return d_padding; };
+            bool get_random_iv() { return d_random_iv; };
+            void get_start_iv(std::vector<unsigned char> &iv){iv= d_start_iv;}
+
+            void get_key(std::vector<unsigned char> &key);
+
+        private:
+            const EVP_CIPHER *d_evp_ciph;
+            bool d_padding;
+            bool d_random_iv;
+            std::vector<unsigned char> d_start_iv;
+            std::string d_keyfilename;
+        };
+
+    } // namespace crypto
 } // namespace gr
 
 #endif /* INCLUDED_CRYPTO_SYM_CIPH_DESC_H */

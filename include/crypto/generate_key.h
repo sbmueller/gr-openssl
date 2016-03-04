@@ -34,7 +34,7 @@ namespace gr {
     class CRYPTO_API generate_key
     {
     public:
-        generate_key(const std::string &keyfilename, int keylen, const std::string &pass );
+        generate_key(const std::string &keyfilename, int keylen, const std::string &password);
         generate_key(const std::string &keyfilename, int keylen);
       ~generate_key();
     private:

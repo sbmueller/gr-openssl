@@ -4,7 +4,7 @@
   <key>crypto_sym_dec_tagged_bb</key>
   <category>crypto</category>
   <import>import crypto</import>
-  <make>crypto.sym_dec_tagged_bb($cipher, $packet_key_len)</make>
+  <make>crypto.sym_dec_tagged_bb(self.$(cipher()), $packet_key_len)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name

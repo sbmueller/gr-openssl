@@ -4,7 +4,7 @@
   <key>crypto_sym_ciph_desc</key>
   <category>crypto</category>
   <import>import crypto</import>
-  <make>crypto.sym_ciph_desc($ciph_name, $padding, $keyfile)</make>
+  <make>crypto.sym_ciph_desc($ciph_name, $padding, $keyfile, $random_iv, $start_iv)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name
@@ -17,8 +17,8 @@
   </param>
 
   <param>
-    <name>Padding</name>
-    <key>padding</key>
+    <name>random start iv</name>
+    <key>random_iv</key>
     <type>enum</type>
     <option>
       <name>Yes</name>
@@ -31,9 +31,31 @@
   </param>
 
   <param>
+    <name>start iv</name>
+    <key>start_iv</key>
+    <type>raw</type>
+
+  </param>
+
+  <param>
+    <name>Padding</name>
+    <key>padding</key>
+    <type>enum</type>
+    <option>
+      <name>No</name>
+      <key>False</key>
+    </option>
+    <option>
+      <name>Yes</name>
+      <key>True</key>
+    </option>
+  </param>
+
+  <param>
     <name>Keyfile</name>
     <key>keyfile</key>
     <type>string</type>
   </param>
+
 
 </block>

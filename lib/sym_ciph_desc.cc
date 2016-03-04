@@ -29,24 +29,39 @@
 namespace gr {
     namespace crypto {
 
-        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename) {
+        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename,
+                                     bool random_iv, const std::vector<unsigned char> &iv)
+        {
             ERR_load_crypto_strings();
             OpenSSL_add_all_ciphers();
             OPENSSL_config(NULL);
 
             d_evp_ciph = EVP_get_cipherbyname(ciph_name.c_str());
-            if (d_evp_ciph == NULL) throw std::runtime_error("cipher not found");
+            if (d_evp_ciph == NULL) throw std::runtime_error("cipher not found\n");
+
+            printf("loaded cipher: %s, iv-length: %i, key-length: %i, block-size: %i\n",
+                   ciph_name.c_str(), d_evp_ciph->iv_len, d_evp_ciph->key_len, d_evp_ciph->block_size);
+
             d_padding = padding;
             d_keyfilename = keyfilename;
+            d_random_iv = random_iv;
 
+            if (!d_random_iv) {
+                if (iv.size() != d_evp_ciph->iv_len)
+                    printf("WARNING length(%i) of given iv wrong\n", (int)iv.size());
+                d_start_iv = iv;
+            }
         }
 
+
         void
-        sym_ciph_desc::get_key(std::vector<unsigned char> &key) {
+        sym_ciph_desc::get_key(std::vector<unsigned char> &key)
+        {
             crypt_helper::read_key_file(d_keyfilename, &key[0], d_evp_ciph->key_len);
         }
 
-        sym_ciph_desc::~sym_ciph_desc() {
+        sym_ciph_desc::~sym_ciph_desc()
+        {
         }
 
     } /* namespace crypto */
