@@ -64,7 +64,7 @@ namespace gr {
 
             //no padding in this block
             if (desc->get_padding() == true)
-                throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks");
+                throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks\n");
 
             d_iv_tagkey = pmt::mp("iv");
             d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
@@ -84,7 +84,7 @@ namespace gr {
         int
         sym_enc_tagged_bb_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
         {
-            return d_ciph->block_size;
+            return ninput_items[0]+d_ciph->block_size;
         }
 
         int
@@ -95,7 +95,6 @@ namespace gr {
         {
             const unsigned char *in = (const unsigned char *) input_items[0];
             unsigned char *out = (unsigned char *) output_items[0];
-
 
             std::vector<gr::tag_t> v;
             get_tags_in_window(v, 0, 0, ninput_items[0], d_new_iv_tagkey);
@@ -112,10 +111,11 @@ namespace gr {
                 }
 
                 d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
-                if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
+                if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
                     ERR_print_errors_fp(stdout);
-                };
-                if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout); };
+
+                if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
+                    ERR_print_errors_fp(stdout);
 
                 d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
                 add_item_tag(0, nitems_read(0), d_iv_tagkey, d_iv_pmt);
@@ -124,17 +124,11 @@ namespace gr {
                 add_item_tag(0, 0, d_iv_tagkey, d_iv_pmt);
             }
 
-
-            if (ninput_items[0] != d_ciph->block_size)
-                throw std::runtime_error("wrong block size at input of encryption\n");
-
-            if (!EVP_EncryptUpdate(d_ciph_ctx, out, &noutput_items, in, d_ciph->block_size))
+            int nout=0;
+            if (!EVP_EncryptUpdate(d_ciph_ctx, out, &nout, in, ninput_items[0]))
                 ERR_print_errors_fp(stdout);
 
-
-            //if(noutput_items != d_block_size) throw std::runtime_error("wrong block size at output of encryption");
-
-            return noutput_items;
+            return nout;
         }
 
     } /* namespace crypto */

@@ -29,23 +29,35 @@
 namespace gr {
     namespace crypto {
 
-        generate_key::generate_key(const std::string &keyfilename, int keylen) {
+        generate_key::generate_key(const std::string &keyfilename, int keylen)
+        {
             std::vector<unsigned char> key(keylen, 0);
-            crypt_helper::gen_rand_bytes(&key[0], keylen);
+            RAND_bytes(&key[0], keylen);
             crypt_helper::write_key_file(keyfilename, &key[0], keylen);
             printf("Write key to keyfile %s\n", keyfilename.c_str());
         }
 
-        generate_key::generate_key(const std::string &keyfilename, int keylen, const std::string &password) {
+        generate_key::generate_key(const std::string &keyfilename, int keylen, const std::string &password)
+        {
             std::vector<unsigned char> key(keylen, 0);
-            //TODO: variabel, salt
             if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 10000, EVP_sha256(), keylen,
                                    &key[0])) { ERR_print_errors_fp(stdout); };
             crypt_helper::write_key_file(keyfilename, &key[0], keylen);
             printf("Write key to keyfile %s\n", keyfilename.c_str());
         }
 
-        generate_key::~generate_key() {
+        generate_key::generate_key(const std::string &keyfilename, int keylen, const std::string &password,
+                                   const unsigned char *salt, int saltlen, int hashrounds)
+        {
+            std::vector<unsigned char> key(keylen, 0);
+            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, salt, saltlen, hashrounds, EVP_sha256(), keylen,
+                                   &key[0])) { ERR_print_errors_fp(stdout); };
+            crypt_helper::write_key_file(keyfilename, &key[0], keylen);
+            printf("Write key to keyfile %s\n", keyfilename.c_str());
+        }
+
+        generate_key::~generate_key()
+        {
         }
 
     } /* namespace crypto */

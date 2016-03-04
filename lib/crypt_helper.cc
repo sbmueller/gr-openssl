@@ -36,9 +36,6 @@ namespace gr {
     {
     }
 
-    void crypt_helper::gen_rand_bytes(unsigned char *b, int len){
-        RAND_bytes(b, len);
-    }
     void crypt_helper::read_key_file(const std::string filename, unsigned char *key, int keylen){
         std::ifstream keyfile(filename.c_str(),std::ios::in | std::ios::binary);
         if (!(keyfile.is_open())) { throw std::runtime_error("key file read error"); }

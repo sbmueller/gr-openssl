@@ -53,10 +53,13 @@ namespace gr {
             d_ciph_ctx = EVP_CIPHER_CTX_new();
 
             d_have_iv = !desc->get_random_iv();
-            if(d_have_iv){
+            if (d_have_iv) {
                 desc->get_start_iv(d_iv);
-                if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) { ERR_print_errors_fp(stdout); };
-                if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout); };
+                if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
+                    ERR_print_errors_fp(stdout);
+                };
+                if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
+                    ERR_print_errors_fp(stdout);
             }
 
             d_iv_tagkey = pmt::mp("iv");
@@ -79,8 +82,7 @@ namespace gr {
         int
         sym_dec_tagged_bb_impl::calculate_output_stream_length(const gr_vector_int &ninput_items)
         {
-            return d_ciph->block_size;
-
+            return ninput_items[0] + d_ciph->block_size;
         }
 
         int
@@ -96,7 +98,7 @@ namespace gr {
             get_tags_in_window(v, 0, 0, ninput_items[0], d_iv_tagkey);
 
 
-            if(v.size()) {
+            if (v.size()) {
                 pmt::pmt_t p = v.front().value;
                 if (pmt::is_u8vector(p)) {
                     //pmt::pmt_u8vector_elements(p);<---kaputt?
@@ -104,22 +106,24 @@ namespace gr {
                     const uint8_t *u8tmp = u8vector_elements(p, t);
                     d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
                     d_have_iv = true;
-                    if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) { ERR_print_errors_fp(stdout); };
-                    if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout); };
+                    if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
+                        ERR_print_errors_fp(stdout);
+
+                    if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
+                        ERR_print_errors_fp(stdout);
                 }
             }
-            if (!d_have_iv) {
+            if (!d_have_iv)
                 throw std::runtime_error("ERROR decryption without iv\n");
-            }
 
-            if (ninput_items[0] != d_ciph->block_size)
-                throw std::runtime_error("wrong block size at input of decryption\n");
-
-            if (!EVP_DecryptUpdate(d_ciph_ctx, out, &noutput_items, in, d_ciph->block_size))
+            int nout = 0;
+            if (!EVP_DecryptUpdate(d_ciph_ctx, out, &nout, in, ninput_items[0]))
                 ERR_print_errors_fp(stdout);
 
 
-            return noutput_items;
+            //printf("nin: %i, nout: %i, noutput_work: %i\n", ninput_items[0], nout, noutput_items);
+
+            return nout;
         }
 
     } /* namespace crypto */

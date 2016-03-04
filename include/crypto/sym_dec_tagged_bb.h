@@ -30,7 +30,7 @@ namespace gr {
   namespace crypto {
 
     /*!
-     * \brief <+description of block+>
+     * \brief symmetric key encryption with block ciphers
      * \ingroup crypto
      *
      */

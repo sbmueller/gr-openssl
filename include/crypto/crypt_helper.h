@@ -34,7 +34,7 @@ namespace gr {
   namespace crypto {
 
     /*!
-     * \brief <+description+>
+     * \brief helper class for some common used functions
      *
      */
     class CRYPTO_API crypt_helper
@@ -43,7 +43,6 @@ namespace gr {
       crypt_helper();
       ~crypt_helper();
 
-      static void gen_rand_bytes(unsigned char *b, int len);
       static void read_key_file(const std::string filename, unsigned char *key, int keylen);
       static void write_key_file(const std::string filename, unsigned char *key, int keylen);
 

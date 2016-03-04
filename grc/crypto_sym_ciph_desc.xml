@@ -5,11 +5,7 @@
   <category>crypto</category>
   <import>import crypto</import>
   <make>crypto.sym_ciph_desc($ciph_name, $padding, $keyfile, $random_iv, $start_iv)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
+
   <param>
     <name>Cipher Name</name>
     <key>ciph_name</key>
@@ -34,7 +30,6 @@
     <name>start iv</name>
     <key>start_iv</key>
     <type>raw</type>
-
   </param>
 
   <param>

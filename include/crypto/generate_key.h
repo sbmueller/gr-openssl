@@ -28,12 +28,14 @@ namespace gr {
   namespace crypto {
 
     /*!
-     * \brief <+description+>
+     * \brief generate keys for encryption algorithms
      *
      */
     class CRYPTO_API generate_key
     {
     public:
+        generate_key(const std::string &keyfilename, int keylen, const std::string &password,
+                     const unsigned char *salt, int saltlen, int hashrounds);
         generate_key(const std::string &keyfilename, int keylen, const std::string &password);
         generate_key(const std::string &keyfilename, int keylen);
       ~generate_key();
