@@ -44,30 +44,30 @@ namespace gr {
                                           gr::io_signature::make(1, 1, sizeof(unsigned char)), packet_len_key)
         {
             sym_ciph_desc *desc = &ciph_desc;
-
             d_ciph = desc->get_evp_ciph();
             d_key.resize(d_ciph->key_len);
             d_iv.resize(d_ciph->iv_len);
-
             desc->get_key(d_key);
 
-            d_ciph_ctx = EVP_CIPHER_CTX_new();
-
+            //random or given iv
             if (desc->get_random_iv()) {
                 RAND_bytes(&d_iv[0], d_ciph->iv_len);
             } else {
                 desc->get_start_iv(d_iv);
             }
 
-            if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) { ERR_print_errors_fp(stdout); };
-            if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) { ERR_print_errors_fp(stdout); };
+            //initialize encryption
+            d_ciph_ctx = EVP_CIPHER_CTX_new();
+            if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
+                ERR_print_errors_fp(stdout);
+            if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
+                ERR_print_errors_fp(stdout);
 
             //no padding in this block
             if (desc->get_padding() == true)
                 throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks\n");
 
             d_iv_tagkey = pmt::mp("iv");
-            d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
             d_new_iv_tagkey = pmt::mp("new_iv");
         }
 
@@ -96,34 +96,40 @@ namespace gr {
             const unsigned char *in = (const unsigned char *) input_items[0];
             unsigned char *out = (unsigned char *) output_items[0];
 
+
             std::vector<gr::tag_t> v;
             get_tags_in_window(v, 0, 0, ninput_items[0], d_new_iv_tagkey);
 
+            //new IV should be generated/used
             if (v.size()) {
                 pmt::pmt_t p = v.front().value;
 
+                //use new given iv from tag or generate random if new not available
                 if (pmt::is_u8vector(p)) {
-                    size_t t = d_ciph->iv_len;
-                    const uint8_t *u8tmp = u8vector_elements(p, t);
+                    size_t iv_len = d_ciph->iv_len;
+                    const uint8_t *u8tmp = u8vector_elements(p, iv_len);
                     d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
                 } else {
                     RAND_bytes(&d_iv[0], d_ciph->iv_len);
                 }
 
-                d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
+                //initialize encryption with new iv
                 if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
                     ERR_print_errors_fp(stdout);
-
                 if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
                     ERR_print_errors_fp(stdout);
 
-                d_iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
-                add_item_tag(0, nitems_read(0), d_iv_tagkey, d_iv_pmt);
+                //send new iv for decryption
+                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
+                add_item_tag(0, nitems_read(0), d_iv_tagkey, iv_pmt);
             }
             else if (nitems_read(0) == 0) {
-                add_item_tag(0, 0, d_iv_tagkey, d_iv_pmt);
+                //send start iv on first sample
+                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
+                add_item_tag(0, 0, d_iv_tagkey, iv_pmt);
             }
 
+            //encrypt
             int nout=0;
             if (!EVP_EncryptUpdate(d_ciph_ctx, out, &nout, in, ninput_items[0]))
                 ERR_print_errors_fp(stdout);

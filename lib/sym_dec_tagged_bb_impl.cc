@@ -44,7 +44,6 @@ namespace gr {
                                           gr::io_signature::make(1, 1, sizeof(unsigned char)), packet_len_tag)
         {
             sym_ciph_desc *desc = &ciph_desc;
-
             d_ciph = desc->get_evp_ciph();
             d_key.resize(d_ciph->key_len);
             d_iv.resize(d_ciph->iv_len);
@@ -52,7 +51,9 @@ namespace gr {
 
             d_ciph_ctx = EVP_CIPHER_CTX_new();
 
+            //initialize decryption if iv is available or not needed
             d_have_iv = !desc->get_random_iv();
+            d_have_iv = d_have_iv || (d_ciph->iv_len==0);
             if (d_have_iv) {
                 desc->get_start_iv(d_iv);
                 if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
@@ -62,10 +63,11 @@ namespace gr {
                     ERR_print_errors_fp(stdout);
             }
 
-            d_iv_tagkey = pmt::mp("iv");
-
+            //no padding in this block
             if (desc->get_padding() == true)
                 throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks\n");
+
+            d_iv_tagkey = pmt::mp("iv");
 
 
         }
@@ -97,15 +99,18 @@ namespace gr {
             std::vector<gr::tag_t> v;
             get_tags_in_window(v, 0, 0, ninput_items[0], d_iv_tagkey);
 
-
+            //new IV
             if (v.size()) {
                 pmt::pmt_t p = v.front().value;
                 if (pmt::is_u8vector(p)) {
                     //pmt::pmt_u8vector_elements(p);<---kaputt?
+                    //set new iv
                     size_t t = d_ciph->iv_len;
                     const uint8_t *u8tmp = u8vector_elements(p, t);
                     d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
+
                     d_have_iv = true;
+                    //initialize decryption for new iv
                     if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
                         ERR_print_errors_fp(stdout);
 
@@ -113,9 +118,11 @@ namespace gr {
                         ERR_print_errors_fp(stdout);
                 }
             }
+            //error if decryption needs iv
             if (!d_have_iv)
                 throw std::runtime_error("ERROR decryption without iv\n");
 
+            //decrypt
             int nout = 0;
             if (!EVP_DecryptUpdate(d_ciph_ctx, out, &nout, in, ninput_items[0]))
                 ERR_print_errors_fp(stdout);

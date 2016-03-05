@@ -38,7 +38,6 @@ namespace gr {
             std::vector<unsigned char> d_iv;
 
             pmt::pmt_t d_iv_tagkey;
-            pmt::pmt_t d_iv_pmt;
             pmt::pmt_t d_new_iv_tagkey;
 
         protected:
@@ -50,7 +49,6 @@ namespace gr {
 
             void get_iv(std::vector<unsigned char> &iv) { iv = d_iv; }
 
-            // Where all the action really happens
             int work(int noutput_items,
                      gr_vector_int &ninput_items,
                      gr_vector_const_void_star &input_items,

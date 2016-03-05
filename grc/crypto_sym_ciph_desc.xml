@@ -7,9 +7,93 @@
   <make>crypto.sym_ciph_desc($ciph_name, $padding, $keyfile, $random_iv, $start_iv)</make>
 
   <param>
-    <name>Cipher Name</name>
+    <name>Cipher</name>
     <key>ciph_name</key>
-    <type>string</type>
+    <type>enum</type>
+    <option><name>aes-128-cbc</name><key>"aes-128-cbc"</key></option>
+    <option><name>aes-128-cfb</name><key>"aes-128-cfb"</key></option>
+    <option><name>aes-128-cfb1</name><key>"aes-128-cfb1"</key></option>
+    <option><name>aes-128-cfb8</name><key>"aes-128-cfb8"</key></option>
+    <option><name>aes-128-ctr</name><key>"aes-128-ctr"</key></option>
+    <option><name>aes-128-ecb</name><key>"aes-128-ecb"</key></option>
+    <option><name>aes-128-ofb</name><key>"aes-128-ofb"</key></option>
+    <option><name>aes-192-cbc</name><key>"aes-192-cbc"</key></option>
+    <option><name>aes-192-cfb</name><key>"aes-192-cfb"</key></option>
+    <option><name>aes-192-cfb1</name><key>"aes-192-cfb1"</key></option>
+    <option><name>aes-192-cfb8</name><key>"aes-192-cfb8"</key></option>
+    <option><name>aes-192-ctr</name><key>"aes-192-ctr"</key></option>
+    <option><name>aes-192-ecb</name><key>"aes-192-ecb"</key></option>
+    <option><name>aes-192-ofb</name><key>"aes-192-ofb"</key></option>
+    <option><name>aes-256-cbc</name><key>"aes-256-cbc"</key></option>
+    <option><name>aes-256-cfb</name><key>"aes-256-cfb"</key></option>
+    <option><name>aes-256-cfb1</name><key>"aes-256-cfb1"</key></option>
+    <option><name>aes-256-cfb8</name><key>"aes-256-cfb8"</key></option>
+    <option><name>aes-256-ctr</name><key>"aes-256-ctr"</key></option>
+    <option><name>aes-256-ecb</name><key>"aes-256-ecb"</key></option>
+    <option><name>aes-256-ofb</name><key>"aes-256-ofb"</key></option>
+    <option><name>bf-cbc</name><key>"bf-cbc"</key></option>
+    <option><name>bf-cfb</name><key>"bf-cfb"</key></option>
+    <option><name>bf-ecb</name><key>"bf-ecb"</key></option>
+    <option><name>bf-ofb</name><key>"bf-ofb"</key></option>
+    <option><name>camellia-128-cbc</name><key>"camellia-128-cbc"</key></option>
+    <option><name>camellia-128-cfb</name><key>"camellia-128-cfb"</key></option>
+    <option><name>camellia-128-cfb1</name><key>"camellia-128-cfb1"</key></option>
+    <option><name>camellia-128-cfb8</name><key>"camellia-128-cfb8"</key></option>
+    <option><name>camellia-128-ecb</name><key>"camellia-128-ecb"</key></option>
+    <option><name>camellia-128-ofb</name><key>"camellia-128-ofb"</key></option>
+    <option><name>camellia-192-cbc</name><key>"camellia-192-cbc"</key></option>
+    <option><name>camellia-192-cfb</name><key>"camellia-192-cfb"</key></option>
+    <option><name>camellia-192-cfb1</name><key>"camellia-192-cfb1"</key></option>
+    <option><name>camellia-192-cfb8</name><key>"camellia-192-cfb8"</key></option>
+    <option><name>camellia-192-ecb</name><key>"camellia-192-ecb"</key></option>
+    <option><name>camellia-192-ofb</name><key>"camellia-192-ofb"</key></option>
+    <option><name>camellia-256-cbc</name><key>"camellia-256-cbc"</key></option>
+    <option><name>camellia-256-cfb</name><key>"camellia-256-cfb"</key></option>
+    <option><name>camellia-256-cfb1</name><key>"camellia-256-cfb1"</key></option>
+    <option><name>camellia-256-cfb8</name><key>"camellia-256-cfb8"</key></option>
+    <option><name>camellia-256-ecb</name><key>"camellia-256-ecb"</key></option>
+    <option><name>camellia-256-ofb</name><key>"camellia-256-ofb"</key></option>
+    <option><name>cast-cbc</name><key>"cast-cbc"</key></option>
+    <option><name>cast5-cbc</name><key>"cast5-cbc"</key></option>
+    <option><name>cast5-cfb</name><key>"cast5-cfb"</key></option>
+    <option><name>cast5-ecb</name><key>"cast5-ecb"</key></option>
+    <option><name>cast5-ofb</name><key>"cast5-ofb"</key></option>
+    <option><name>des-cbc</name><key>"des-cbc"</key></option>
+    <option><name>des-cfb</name><key>"des-cfb"</key></option>
+    <option><name>des-cfb1</name><key>"des-cfb1"</key></option>
+    <option><name>des-cfb8</name><key>"des-cfb8"</key></option>
+    <option><name>des-ecb</name><key>"des-ecb"</key></option>
+    <option><name>des-ede</name><key>"des-ede"</key></option>
+    <option><name>des-ede-cbc</name><key>"des-ede-cbc"</key></option>
+    <option><name>des-ede-cfb</name><key>"des-ede-cfb"</key></option>
+    <option><name>des-ede-ofb</name><key>"des-ede-ofb"</key></option>
+    <option><name>des-ede3</name><key>"des-ede3"</key></option>
+    <option><name>des-ede3-cbc</name><key>"des-ede3-cbc"</key></option>
+    <option><name>des-ede3-cfb</name><key>"des-ede3-cfb"</key></option>
+    <option><name>des-ede3-cfb1</name><key>"des-ede3-cfb1"</key></option>
+    <option><name>des-ede3-cfb8</name><key>"des-ede3-cfb8"</key></option>
+    <option><name>des-ede3-ofb</name><key>"des-ede3-ofb"</key></option>
+    <option><name>des-ofb</name><key>"des-ofb"</key></option>
+    <option><name>des3</name><key>"des3"</key></option>
+    <option><name>desx</name><key>"desx"</key></option>
+    <option><name>desx-cbc</name><key>"desx-cbc"</key></option>
+    <option><name>rc2</name><key>"rc2"</key></option>
+    <option><name>rc2-40-cbc</name><key>"rc2-40-cbc"</key></option>
+    <option><name>rc2-64-cbc</name><key>"rc2-64-cbc"</key></option>
+    <option><name>rc2-cbc</name><key>"rc2-cbc"</key></option>
+    <option><name>rc2-cfb</name><key>"rc2-cfb"</key></option>
+    <option><name>rc2-ecb</name><key>"rc2-ecb"</key></option>
+    <option><name>rc2-ofb</name><key>"rc2-ofb"</key></option>
+    <option><name>rc4</name><key>"rc4"</key></option>
+    <option><name>rc4-40</name><key>"rc4-40"</key></option>
+    <option><name>seed-cbc</name><key>"seed-cbc"</key></option>
+    <option><name>seed-cfb</name><key>"seed-cfb"</key></option>
+    <option><name>seed-ecb</name><key>"seed-ecb"</key></option>
+    <option><name>seed-ofb</name><key>"seed-ofb"</key></option>
+    <option><name>rc5-cbc</name><key>"rc5-cbc"</key></option>
+    <option><name>rc5-cfb</name><key>"rc5-cfb"</key></option>
+    <option><name>rc5-ecb</name><key>"rc5-ecb"</key></option>
+    <option><name>rc5-ofb</name><key>"rc5-ofb"</key></option>
   </param>
 
   <param>

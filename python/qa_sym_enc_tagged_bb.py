@@ -23,6 +23,7 @@ from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import crypto_swig as crypto
 import binascii
+import numpy
 
 class qa_sym_enc_tagged_bb (gr_unittest.TestCase):
 
@@ -105,6 +106,39 @@ class qa_sym_enc_tagged_bb (gr_unittest.TestCase):
 
         print "Encrypted hex: {0}".format(binascii.hexlify(encrypted))
         print "Decrypted: \t{0}, \thex: {1}".format(decrypted, binascii.hexlify(decrypted))
+
+        self.assertEqual(plain, decrypted)
+
+
+    #with more random data
+    def test_003_t (self):
+        cipher_name = "aes-128-ofb"
+        keyfilename = "test_key.deleteme"
+
+        #key = numpy.random.randint(0, 256, 16).tolist()
+        print "\nTest03"
+        key = bytearray("aaaaaaaaaaaaaaaa")
+        plain=bytearray(numpy.random.randint(0, 256, 16*10000).tolist())
+
+        self.write_bytes_to_file(key, keyfilename)
+
+        cipher_desc = crypto.sym_ciph_desc(cipher_name, False, keyfilename, True, [])
+
+        src = blocks.vector_source_b(plain)
+        tagger = blocks.stream_to_tagged_stream(1, 1, 160, "packet_len")
+        enc = crypto.sym_enc_tagged_bb(cipher_desc, "packet_len")
+        snk_enc = blocks.vector_sink_b()
+        dec = crypto.sym_dec_tagged_bb(cipher_desc, "packet_len")
+        snk = blocks.vector_sink_b()
+
+        self.tb.connect(src, tagger, enc, dec, snk)
+        self.tb.connect(enc, snk_enc)
+        self.tb.run()
+
+
+
+        encrypted = bytearray(snk_enc.data())
+        decrypted = bytearray(snk.data())
 
         self.assertEqual(plain, decrypted)
 

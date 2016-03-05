@@ -30,11 +30,24 @@ namespace gr {
     class sym_enc_impl : public sym_enc
     {
      private:
-      // Nothing to declare in this block.
+        const EVP_CIPHER *d_ciph;
+        EVP_CIPHER_CTX *d_ciph_ctx;
+        bool d_padding;
+
+        std::vector<uint8_t> d_key;
+        std::vector<uint8_t> d_iv;
+
+        pmt::pmt_t d_iv_key;
+        pmt::pmt_t d_new_iv_key;
+        pmt::pmt_t d_out_port_id;
+        pmt::pmt_t d_in_port_id;
+
 
      public:
       sym_enc_impl(sym_ciph_desc &ciph_desc);
       ~sym_enc_impl();
+
+      void msg_handler(pmt::pmt_t msg);
 
 
     };
