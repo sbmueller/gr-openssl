@@ -28,8 +28,7 @@
 namespace gr {
     namespace crypto {
 
-        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename,
-                                     bool random_iv, const std::vector<unsigned char> &iv)
+        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename)
         {
             ERR_load_crypto_strings();
             OpenSSL_add_all_ciphers();
@@ -43,13 +42,7 @@ namespace gr {
 
             d_padding = padding;
             d_keyfilename = keyfilename;
-            d_random_iv = random_iv;
 
-            if (!d_random_iv) {
-                if (iv.size() != d_evp_ciph->iv_len)
-                    printf("WARNING length(%i) of given iv is wrong\n", (int)iv.size());
-                d_start_iv = iv;
-            }
         }
 
 

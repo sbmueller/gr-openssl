@@ -30,12 +30,24 @@ namespace gr {
     class sym_dec_impl : public sym_dec
     {
      private:
-      // Nothing to declare in this block.
+        const EVP_CIPHER *d_ciph;
+        EVP_CIPHER_CTX *d_ciph_ctx;
+        bool d_have_iv;
+        bool d_padding;
+
+        std::vector<unsigned char> d_key;
+        std::vector<unsigned char> d_iv;
+
+        pmt::pmt_t d_iv_key;
+        pmt::pmt_t d_out_port_id;
+        pmt::pmt_t d_in_port_id;
+
 
      public:
       sym_dec_impl(sym_ciph_desc &ciph_desc);
       ~sym_dec_impl();
 
+      void msg_handler(pmt::pmt_t msg);
     };
 
   } // namespace crypto

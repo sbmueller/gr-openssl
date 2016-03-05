@@ -52,10 +52,8 @@ namespace gr {
             d_ciph_ctx = EVP_CIPHER_CTX_new();
 
             //initialize decryption if iv is available or not needed
-            d_have_iv = !desc->get_random_iv();
-            d_have_iv = d_have_iv || (d_ciph->iv_len==0);
+            d_have_iv = false || (d_ciph->iv_len==0);
             if (d_have_iv) {
-                desc->get_start_iv(d_iv);
                 if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                     ERR_print_errors_fp(stdout);
                 };

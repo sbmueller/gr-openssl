@@ -4,7 +4,7 @@
   <key>crypto_sym_ciph_desc</key>
   <category>crypto</category>
   <import>import crypto</import>
-  <make>crypto.sym_ciph_desc($ciph_name, $padding, $keyfile, $random_iv, $start_iv)</make>
+  <make>crypto.sym_ciph_desc($ciph_name, $padding, $keyfile)</make>
 
   <param>
     <name>Cipher</name>
@@ -94,26 +94,6 @@
     <option><name>rc5-cfb</name><key>"rc5-cfb"</key></option>
     <option><name>rc5-ecb</name><key>"rc5-ecb"</key></option>
     <option><name>rc5-ofb</name><key>"rc5-ofb"</key></option>
-  </param>
-
-  <param>
-    <name>random start iv</name>
-    <key>random_iv</key>
-    <type>enum</type>
-    <option>
-      <name>Yes</name>
-      <key>True</key>
-    </option>
-    <option>
-      <name>No</name>
-      <key>False</key>
-    </option>
-  </param>
-
-  <param>
-    <name>start iv</name>
-    <key>start_iv</key>
-    <type>raw</type>
   </param>
 
   <param>

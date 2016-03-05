@@ -24,6 +24,7 @@ from gnuradio import blocks
 #import crypto_swig as crypto
 import numpy
 import crypto
+import binascii
 
 class qa_sym_enc (gr_unittest.TestCase):
 
@@ -37,9 +38,35 @@ class qa_sym_enc (gr_unittest.TestCase):
 
     #test correct encryption
     def test_001_t (self):
-       self.tb.run()
+        cipher_name = "aes-128-cbc"
+        keyfilename = "test_key.deleteme"
+
+        key = bytearray(numpy.random.randint(0, 256, 16).tolist())
+        plain=bytearray(numpy.random.randint(0, 256, 16).tolist())
+
+        self.write_bytes_to_file(key, keyfilename)
+
+        #TODO: finish :D
+        cipher_desc = crypto.sym_ciph_desc(cipher_name, False, keyfilename)
+        src = blocks.message_strobe(pmt.init_u8vector(16, plain))
+        enc = crypto.sym_enc(cipher_desc)
+        dec = crypto.sym_dec(cipher_desc)
+
+        self.tb.connect(src, tagger, enc, dec, snk)
+        self.tb.connect(enc, snk_enc)
+        self.tb.run()
+
+        encrypted = bytearray(snk_enc.data())
+        decrypted = bytearray(snk.data())
+
+        self.assertEqual(plain, decrypted)
 
 
+    def write_bytes_to_file(self, b, filename):
+        f = open(filename, "wb")
+        f.write(b)
+        f.close()
+        # check data
 
 
 if __name__ == '__main__':

@@ -48,8 +48,6 @@ namespace gr {
       sym_dec_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_tag);
       ~sym_dec_tagged_bb_impl();
 
-      void get_iv(std::vector<unsigned char> &iv) { iv = d_iv; }
-
       // Where all the action really happens
       int work(int noutput_items,
            gr_vector_int &ninput_items,

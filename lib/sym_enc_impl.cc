@@ -44,6 +44,14 @@ namespace gr {
                             gr::io_signature::make(0, 0, 0),
                             gr::io_signature::make(0, 0, 0))
         {
+            d_iv_key = pmt::mp("iv");
+            d_out_port_id = pmt::mp("encrypted");
+            d_in_port_id = pmt::mp("plain");
+
+            message_port_register_out(d_out_port_id);
+            message_port_register_in(d_in_port_id);
+            set_msg_handler(d_in_port_id, boost::bind(&sym_enc_impl::msg_handler, this, _1));
+
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
             d_key.resize(d_ciph->key_len);
@@ -51,12 +59,8 @@ namespace gr {
             desc->get_key(d_key);
             d_padding = desc->get_padding();
 
-            //random or given iv
-            if (desc->get_random_iv()) {
-                RAND_bytes(&d_iv[0], d_ciph->iv_len);
-            } else {
-                desc->get_start_iv(d_iv);
-            }
+            //random iv
+            RAND_bytes(&d_iv[0], d_ciph->iv_len);
 
             //initialize encryption
             d_ciph_ctx = EVP_CIPHER_CTX_new();
@@ -64,15 +68,6 @@ namespace gr {
                 ERR_print_errors_fp(stdout);
             if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
                 ERR_print_errors_fp(stdout);
-
-            d_iv_key = pmt::mp("iv");
-            d_new_iv_key = pmt::mp("new_iv");
-            d_out_port_id = pmt::mp("encrypted");
-            d_in_port_id = pmt::mp("plain");
-
-            message_port_register_out(d_out_port_id);
-            message_port_register_in(d_in_port_id);
-            set_msg_handler(d_in_port_id, boost::bind(&sym_enc_impl::msg_handler, this, _1));
 
         }
 
@@ -82,15 +77,21 @@ namespace gr {
             EVP_CIPHER_CTX_free(d_ciph_ctx);
         }
 
-        //3 cases:
-        //msg==pure pmt u8 vector-->data to encrypt
-        //msg==pair pmt (pmt"iv", pmt u8 vec with iv)   -->use new iv
-        //msg==d_new_iv_key ->use new random iv
+        bool
+        sym_enc_impl::start()
+        {
+            //send first iv instantly
+            pmt::pmt_t iv_msg = pmt::cons(d_iv_key, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
+            message_port_pub(d_out_port_id, iv_msg);
+            return true;
+         }
+
         void
         sym_enc_impl::msg_handler(pmt::pmt_t msg)
         {
-            bool final = false;
-
+            //2 cases:
+            //msg==pure pmt u8 vector-->data to encrypt
+            //msg==d_new_iv_key ->use new random iv
 
             //new data to encrypt
             if (pmt::is_u8vector(msg)) {
@@ -105,33 +106,22 @@ namespace gr {
                     ERR_print_errors_fp(stdout);
 
                 //publish
-                message_port_pub(d_out_port_id, pmt::init_u8vector(nout, out_buffer));
+                if(nout != 0)
+                    message_port_pub(d_out_port_id, pmt::init_u8vector(nout, out_buffer));
 
             }
-            //check if new iv should be used
-            else if (pmt::is_pair(msg)) {
-                //car=first, cdr=second
-                if (pmt::car(msg) == d_new_iv_key && pmt::is_u8vector(pmt::cdr(msg))) {
-                    //set new iv
-                    size_t iv_len = d_ciph->iv_len;
-                    const uint8_t *u8tmp = u8vector_elements(pmt::cdr(msg), iv_len);
-                    d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
-                    final = true;
-                }
-            }
-            //random iv requested
-            else if (msg == d_new_iv_key) {
+            //new random iv requested
+            else if (msg == d_iv_key) {
                 RAND_bytes(&d_iv[0], d_ciph->iv_len);
-                final = true;
-            }
-            //new iv generated, flush remaining data and reset
-            if (final) {
+
                 int nout = 0;
                 uint8_t out_buffer[d_ciph->block_size];
-                EVP_EncryptFinal_ex(d_ciph_ctx, out_buffer, &nout);
+                if (!EVP_EncryptFinal_ex(d_ciph_ctx, out_buffer, &nout))
+                    ERR_print_errors_fp(stdout);
 
                 //publish
-                message_port_pub(d_out_port_id, pmt::init_u8vector(nout, out_buffer));
+                if(nout!=0)
+                    message_port_pub(d_out_port_id, pmt::init_u8vector(nout, out_buffer));
 
                 //initialize encryption with new iv
                 if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
@@ -139,8 +129,9 @@ namespace gr {
                 if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
                     ERR_print_errors_fp(stdout);
 
-                //send new iv for decryption
+                //send new iv
                 pmt::pmt_t iv_msg = pmt::cons(d_iv_key, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
+                message_port_pub(d_out_port_id, iv_msg);
             }
         }
 

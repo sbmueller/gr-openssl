@@ -38,7 +38,6 @@ namespace gr {
             std::vector<unsigned char> d_iv;
 
             pmt::pmt_t d_iv_tagkey;
-            pmt::pmt_t d_new_iv_tagkey;
 
         protected:
             int calculate_output_stream_length(const gr_vector_int &ninput_items);
@@ -53,6 +52,7 @@ namespace gr {
                      gr_vector_int &ninput_items,
                      gr_vector_const_void_star &input_items,
                      gr_vector_void_star &output_items);
+            bool start();
         };
 
     } // namespace crypto

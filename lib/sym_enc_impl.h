@@ -38,9 +38,9 @@ namespace gr {
         std::vector<uint8_t> d_iv;
 
         pmt::pmt_t d_iv_key;
-        pmt::pmt_t d_new_iv_key;
         pmt::pmt_t d_out_port_id;
         pmt::pmt_t d_in_port_id;
+
 
 
      public:
@@ -48,6 +48,7 @@ namespace gr {
       ~sym_enc_impl();
 
       void msg_handler(pmt::pmt_t msg);
+      bool start();
 
 
     };
