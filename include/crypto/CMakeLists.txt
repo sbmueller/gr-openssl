@@ -22,7 +22,6 @@
 ########################################################################
 install(FILES
     api.h
-    crypt_helper.h
     generate_key.h
     sym_enc_tagged_bb.h
     sym_dec_tagged_bb.h

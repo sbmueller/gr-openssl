@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <block>
-  <name>sym_dec_tagged_bb</name>
+  <name>Symmetric Decryption Tagged Stream</name>
   <key>crypto_sym_dec_tagged_bb</key>
   <category>crypto</category>
   <import>import crypto</import>

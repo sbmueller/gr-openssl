@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <block>
-  <name>generate_key_random</name>
+  <name>Generate random Key</name>
   <key>crypto_generate_key_rand</key>
   <category>crypto</category>
   <import>import crypto</import>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <block>
-  <name>sym_dec</name>
+  <name>Symmetric Decryption</name>
   <key>crypto_sym_dec</key>
   <category>crypto</category>
   <import>import crypto</import>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <block>
-  <name>sym_enc_tagged_bb</name>
+  <name>Symmetric Encryption Tagged Stream</name>
   <key>crypto_sym_enc_tagged_bb</key>
   <category>crypto</category>
   <import>import crypto</import>

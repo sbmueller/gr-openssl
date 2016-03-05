@@ -24,7 +24,9 @@ from gnuradio import blocks
 #import crypto_swig as crypto
 import numpy
 import crypto
-import binascii
+import pmt
+from time import sleep
+
 
 class qa_sym_enc (gr_unittest.TestCase):
 
@@ -36,28 +38,35 @@ class qa_sym_enc (gr_unittest.TestCase):
     def tearDown (self):
         self.tb = None
 
-    #test correct encryption
+    #test correct encryption and decryption
     def test_001_t (self):
-        cipher_name = "aes-128-cbc"
+        cipher_name = "aes-256-cbc"
         keyfilename = "test_key.deleteme"
+        plainlen = 32;
 
-        key = bytearray(numpy.random.randint(0, 256, 16).tolist())
-        plain=bytearray(numpy.random.randint(0, 256, 16).tolist())
+        key = bytearray(numpy.random.randint(0, 256, 32).tolist())
+        plain=bytearray(numpy.random.randint(0, 256, plainlen).tolist())
 
         self.write_bytes_to_file(key, keyfilename)
 
-        #TODO: finish :D
         cipher_desc = crypto.sym_ciph_desc(cipher_name, False, keyfilename)
-        src = blocks.message_strobe(pmt.init_u8vector(16, plain))
+        src = blocks.message_strobe(pmt.init_u8vector(plainlen, plain),50)
         enc = crypto.sym_enc(cipher_desc)
         dec = crypto.sym_dec(cipher_desc)
+        snk = blocks.message_debug()
 
-        self.tb.connect(src, tagger, enc, dec, snk)
-        self.tb.connect(enc, snk_enc)
-        self.tb.run()
+        self.tb.msg_connect(src,"strobe", enc, "plain")
+        self.tb.msg_connect(enc, "encrypted", dec, "encrypted")
+        self.tb.msg_connect(dec, "decrypted", snk, "store")
 
-        encrypted = bytearray(snk_enc.data())
-        decrypted = bytearray(snk.data())
+        self.tb.start()
+        sleep(0.75)
+        src.set_period(1000000);
+        self.tb.stop()
+        self.tb.wait()
+
+        #print pmt.u8vector_elements(snk.get_message(0))
+        decrypted = bytearray(pmt.u8vector_elements(snk.get_message(0)))
 
         self.assertEqual(plain, decrypted)
 
@@ -70,4 +79,4 @@ class qa_sym_enc (gr_unittest.TestCase):
 
 
 if __name__ == '__main__':
-    gr_unittest.run(qa_sym_enc, "qa_sym_enc.xml")
+    gr_unittest.run(qa_sym_enc)

@@ -23,8 +23,14 @@
 #define INCLUDED_CRYPTO_SYM_CIPH_DESC_H
 
 #include <crypto/api.h>
-#include <crypto/crypt_helper.h>
+#include <crypto/generate_key.h>
 #include <stdexcept>
+#include <openssl/evp.h>
+#include <openssl/conf.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+
+
 
 
 namespace gr {
@@ -40,20 +46,16 @@ namespace gr {
             typedef boost::shared_ptr<sym_ciph_desc> sptr;
 
             sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename);
-
             ~sym_ciph_desc();
 
             const EVP_CIPHER *get_evp_ciph() { return d_evp_ciph; };
-
             bool get_padding() { return d_padding; };
-
-            void get_key(std::vector<unsigned char> &key);
+            void get_key(std::vector <unsigned char> &key){ key = d_key;}
 
         private:
             const EVP_CIPHER *d_evp_ciph;
             bool d_padding;
-            bool d_random_iv;
-            std::vector<unsigned char> d_start_iv;
+            std::vector <unsigned char> d_key;
             std::string d_keyfilename;
         };
 

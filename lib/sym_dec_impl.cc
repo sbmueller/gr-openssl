@@ -53,8 +53,8 @@ namespace gr {
 
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_key.resize(d_ciph->key_len);
-            d_iv.resize(d_ciph->iv_len);
+            d_key.assign(d_ciph->key_len, 0);
+            d_iv.assign(d_ciph->iv_len, 0);
             desc->get_key(d_key);
             d_padding = desc->get_padding();
 
@@ -80,7 +80,7 @@ namespace gr {
 
             if (pmt::is_u8vector(msg)) {
                 size_t inlen = pmt::length(msg);
-                const uint8_t *in = u8vector_elements(msg, inlen);
+                const unsigned char *in = u8vector_elements(msg, inlen);
                 uint8_t out_buffer[inlen + d_ciph->block_size];
 
                 if (!d_have_iv)
@@ -99,13 +99,13 @@ namespace gr {
                 //car=first, cdr=second
                 if (pmt::car(msg) == d_iv_key && pmt::is_u8vector(pmt::cdr(msg))) {
                     size_t iv_len = d_ciph->iv_len;
-                    const uint8_t *u8tmp = u8vector_elements(pmt::cdr(msg), iv_len);
+                    const unsigned char *u8tmp = u8vector_elements(pmt::cdr(msg), iv_len);
                     d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
 
                     if (d_have_iv) {
                         //decrypt
                         int nout = 0;
-                        uint8_t out_buffer[d_ciph->block_size];
+                        unsigned char out_buffer[d_ciph->block_size];
                         if (!EVP_DecryptFinal_ex(d_ciph_ctx, out_buffer, &nout))
                             ERR_print_errors_fp(stdout);
                         //publish
@@ -114,7 +114,7 @@ namespace gr {
                     }
                     d_have_iv = true;
                     //initialize encryption with new iv
-                    if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
+                    if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
                         ERR_print_errors_fp(stdout);
                     if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
                         ERR_print_errors_fp(stdout);

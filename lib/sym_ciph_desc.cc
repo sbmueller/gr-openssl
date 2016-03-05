@@ -24,6 +24,7 @@
 
 #include <gnuradio/io_signature.h>
 #include <crypto/sym_ciph_desc.h>
+#include <stdint.h>
 
 namespace gr {
     namespace crypto {
@@ -42,18 +43,14 @@ namespace gr {
 
             d_padding = padding;
             d_keyfilename = keyfilename;
-
+            d_key = std::vector<unsigned char> (d_evp_ciph->key_len,0);
+            generate_key::read_key_file(d_keyfilename, &d_key[0], d_evp_ciph->key_len);
         }
 
-
-        void
-        sym_ciph_desc::get_key(std::vector<unsigned char> &key)
-        {
-            crypt_helper::read_key_file(d_keyfilename, &key[0], d_evp_ciph->key_len);
-        }
 
         sym_ciph_desc::~sym_ciph_desc()
         {
+            d_key.assign(d_evp_ciph->key_len, 0);
         }
 
     } /* namespace crypto */

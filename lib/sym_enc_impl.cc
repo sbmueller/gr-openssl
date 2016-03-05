@@ -54,8 +54,8 @@ namespace gr {
 
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_key.resize(d_ciph->key_len);
-            d_iv.resize(d_ciph->iv_len);
+            d_key.assign(d_ciph->key_len,0);
+            d_iv.assign(d_ciph->iv_len,0);
             desc->get_key(d_key);
             d_padding = desc->get_padding();
 
@@ -97,7 +97,7 @@ namespace gr {
             if (pmt::is_u8vector(msg)) {
 
                 size_t inlen = pmt::length(msg);
-                const uint8_t *in = u8vector_elements(msg, inlen);
+                const unsigned char *in = u8vector_elements(msg, inlen);
                 uint8_t out_buffer[inlen + d_ciph->block_size];
 
                 //encrypt

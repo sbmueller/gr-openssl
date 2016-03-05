@@ -45,8 +45,8 @@ namespace gr {
         {
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_key.resize(d_ciph->key_len);
-            d_iv.resize(d_ciph->iv_len);
+            d_key.assign(d_ciph->key_len,0);
+            d_iv.assign(d_ciph->iv_len,0);
             desc->get_key(d_key);
 
             //random iv
@@ -99,13 +99,11 @@ namespace gr {
             const unsigned char *in = (const unsigned char *) input_items[0];
             unsigned char *out = (unsigned char *) output_items[0];
 
-
             std::vector<gr::tag_t> v;
             get_tags_in_window(v, 0, 0, ninput_items[0], d_iv_tagkey);
 
-            //new IV should be generated/used
+            //new IV should be generated
             if (v.size()) {
-                pmt::pmt_t p = v.front().value;
                 RAND_bytes(&d_iv[0], d_ciph->iv_len);
 
                 //initialize encryption with new iv

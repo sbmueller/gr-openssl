@@ -11,7 +11,6 @@
 #include "crypto/sym_enc_tagged_bb.h"
 #include "crypto/sym_ciph_desc.h"
 #include "crypto/generate_key.h"
-#include "crypto/crypt_helper.h"
 #include "crypto/sym_dec_tagged_bb.h"
 #include "crypto/sym_enc.h"
 #include "crypto/sym_dec.h"
@@ -22,7 +21,6 @@
 GR_SWIG_BLOCK_MAGIC2(crypto, sym_enc_tagged_bb);
 
 %include "crypto/generate_key.h"
-%include "crypto/crypt_helper.h"
 %include "crypto/sym_dec_tagged_bb.h"
 GR_SWIG_BLOCK_MAGIC2(crypto, sym_dec_tagged_bb);
 %include "crypto/sym_enc.h"

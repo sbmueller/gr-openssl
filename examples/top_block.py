@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Sat Mar  5 06:29:03 2016
+# Generated: Sat Mar  5 16:34:40 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -61,19 +61,15 @@ class top_block(gr.top_block, Qt.QWidget):
         ##################################################
         # Blocks
         ##################################################
-        self.crypto_sym_ciph_desc_0 = crypto.sym_ciph_desc("bf-ofb", False, "/home/maier/meinkey.bin")
+        self.crypto_sym_ciph_desc_0 = crypto.sym_ciph_desc("aes-256-ctr", False, "/home/maier/meinkey.bin")
         self.crypto_sym_enc_0 = crypto.sym_enc(self.crypto_sym_ciph_desc_0)
         self.crypto_sym_dec_0 = crypto.sym_dec(self.crypto_sym_ciph_desc_0)
-        self.blocks_message_strobe_0_1 = blocks.message_strobe(pmt.string_to_symbol("iv"), 1005)
-        self.blocks_message_strobe_0_0 = blocks.message_strobe(pmt.make_u8vector(16, 65), 1000)
-        self.blocks_message_debug_0 = blocks.message_debug()
+        self.blocks_message_strobe_0_0 = blocks.message_strobe(pmt.make_u8vector(17, 65), 500)
 
         ##################################################
         # Connections
         ##################################################
         self.msg_connect((self.blocks_message_strobe_0_0, 'strobe'), (self.crypto_sym_enc_0, 'plain'))    
-        self.msg_connect((self.blocks_message_strobe_0_1, 'strobe'), (self.crypto_sym_enc_0, 'plain'))    
-        self.msg_connect((self.crypto_sym_dec_0, 'decrypted'), (self.blocks_message_debug_0, 'print'))    
         self.msg_connect((self.crypto_sym_enc_0, 'encrypted'), (self.crypto_sym_dec_0, 'encrypted'))    
 
     def closeEvent(self, event):

@@ -38,7 +38,6 @@ namespace gr {
         std::vector<unsigned char> d_iv;
 
         pmt::pmt_t d_iv_tagkey;
-
         bool d_have_iv;
 
      protected:
@@ -48,7 +47,6 @@ namespace gr {
       sym_dec_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_tag);
       ~sym_dec_tagged_bb_impl();
 
-      // Where all the action really happens
       int work(int noutput_items,
            gr_vector_int &ninput_items,
            gr_vector_const_void_star &input_items,

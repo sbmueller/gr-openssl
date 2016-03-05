@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <block>
-  <name>sym_ciph_desc</name>
+  <name>Cipher Definition</name>
   <key>crypto_sym_ciph_desc</key>
   <category>crypto</category>
   <import>import crypto</import>

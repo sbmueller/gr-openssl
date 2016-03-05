@@ -45,13 +45,13 @@ namespace gr {
         {
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_key.resize(d_ciph->key_len);
-            d_iv.resize(d_ciph->iv_len);
+            d_key.assign(d_ciph->key_len,0);
+            d_iv.assign(d_ciph->iv_len,0);
             desc->get_key(d_key);
 
             d_ciph_ctx = EVP_CIPHER_CTX_new();
 
-            //initialize decryption if iv is available or not needed
+            //initialize decryption if iv is not needed
             d_have_iv = false || (d_ciph->iv_len==0);
             if (d_have_iv) {
                 if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
@@ -66,13 +66,8 @@ namespace gr {
                 throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks\n");
 
             d_iv_tagkey = pmt::mp("iv");
-
-
         }
 
-        /*
-         * Our virtual destructor.
-         */
         sym_dec_tagged_bb_impl::~sym_dec_tagged_bb_impl()
         {
             d_key.assign(d_ciph->key_len, 0);
@@ -104,7 +99,7 @@ namespace gr {
                     //pmt::pmt_u8vector_elements(p);<---kaputt?
                     //set new iv
                     size_t t = d_ciph->iv_len;
-                    const uint8_t *u8tmp = u8vector_elements(p, t);
+                    const unsigned char *u8tmp = u8vector_elements(p, t);
                     d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
 
                     d_have_iv = true;

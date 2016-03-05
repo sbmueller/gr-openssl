@@ -379,7 +379,7 @@
     </param>
     <param>
       <key>ciph_name</key>
-      <value>"desx"</value>
+      <value>"bf-ofb"</value>
     </param>
     <param>
       <key>comment</key>

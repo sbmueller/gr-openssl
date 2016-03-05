@@ -75,8 +75,8 @@ class qa_sym_enc_tagged_bb (gr_unittest.TestCase):
         keyfilename = "test_key.deleteme"
 
         #key = numpy.random.randint(0, 256, 16).tolist()
-        print "\nTest03"
-        key = bytearray("aaaaaaaaaaaaaaaa")
+        print "\nTest02"
+        key = bytearray("numpy.random.randint(0, 256, 16).tolist()")
         plain=bytearray(numpy.random.randint(0, 256, 16*10000).tolist())
 
         self.write_bytes_to_file(key, keyfilename)
@@ -93,8 +93,6 @@ class qa_sym_enc_tagged_bb (gr_unittest.TestCase):
         self.tb.connect(src, tagger, enc, dec, snk)
         self.tb.connect(enc, snk_enc)
         self.tb.run()
-
-
 
         encrypted = bytearray(snk_enc.data())
         decrypted = bytearray(snk.data())

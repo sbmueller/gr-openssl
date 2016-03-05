@@ -23,6 +23,12 @@
 #define INCLUDED_CRYPTO_GENERATE_KEY_H
 
 #include <crypto/api.h>
+#include <openssl/evp.h>
+#include <openssl/conf.h>
+#include <openssl/err.h>
+#include <openssl/rand.h>
+#include <fstream>
+#include <stdexcept>
 
 namespace gr {
   namespace crypto {
@@ -38,6 +44,10 @@ namespace gr {
                      const unsigned char *salt, int saltlen, int hashrounds);
         generate_key(const std::string &keyfilename, int keylen, const std::string &password);
         generate_key(const std::string &keyfilename, int keylen);
+
+        static void read_key_file(const std::string filename, unsigned char *key, int keylen);
+        static void write_key_file(const std::string filename, unsigned char *key, int keylen);
+
       ~generate_key();
     private:
     };

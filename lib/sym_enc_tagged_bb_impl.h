@@ -34,8 +34,8 @@ namespace gr {
             const EVP_CIPHER *d_ciph;
             EVP_CIPHER_CTX *d_ciph_ctx;
 
-            std::vector<unsigned char> d_key;
-            std::vector<unsigned char> d_iv;
+            std::vector<uint8_t > d_key;
+            std::vector<uint8_t> d_iv;
 
             pmt::pmt_t d_iv_tagkey;
 
@@ -46,7 +46,7 @@ namespace gr {
             sym_enc_tagged_bb_impl(sym_ciph_desc &ciph_desc, const std::string &packet_len_key);
             ~sym_enc_tagged_bb_impl();
 
-            void get_iv(std::vector<unsigned char> &iv) { iv = d_iv; }
+            void get_iv(std::vector<uint8_t> &iv) { iv = d_iv; }
 
             int work(int noutput_items,
                      gr_vector_int &ninput_items,
