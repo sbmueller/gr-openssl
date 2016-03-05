@@ -103,7 +103,7 @@ namespace gr {
                     d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
 
                     if (d_have_iv) {
-                        //decrypt
+                        //decrypt final part
                         int nout = 0;
                         unsigned char out_buffer[d_ciph->block_size];
                         if (!EVP_DecryptFinal_ex(d_ciph_ctx, out_buffer, &nout))

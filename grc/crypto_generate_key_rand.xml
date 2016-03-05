@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <block>
   <name>Generate random Key</name>
-  <key>crypto_generate_key_rand</key>
+  <key>crypto_ygenerate_key_rand</key>
   <category>crypto</category>
   <import>import crypto</import>
   <make>crypto.generate_key($keyfilename, $keylen)</make>

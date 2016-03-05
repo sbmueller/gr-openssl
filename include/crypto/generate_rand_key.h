@@ -37,6 +37,7 @@ namespace gr {
       generate_rand_key(const std::string keyfilename, int keylen);
       ~generate_rand_key();
     private:
+
     };
 
   } // namespace crypto
