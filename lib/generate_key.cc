@@ -28,48 +28,33 @@
 namespace gr {
     namespace crypto {
 
-        generate_key::generate_key(const std::string &keyfilename, int keylen)
+        std::vector<uint8_t>
+        generate_key::make_pass_key(int keylen, const std::string &password)
         {
-            std::vector<unsigned char> key(keylen, 0);
-            RAND_bytes(&key[0], keylen);
-            write_key_file(keyfilename, &key[0], keylen);
-            printf("Write key to keyfile %s\n", keyfilename.c_str());
-        }
-
-        generate_key::generate_key(const std::string &keyfilename, int keylen, const std::string &password)
-        {
-            std::vector<unsigned char> key(keylen, 0);
-            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 10000, EVP_sha512(), keylen,
+            std::vector<uint8_t> key(keylen, 0);
+            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 20000, EVP_sha512(), keylen,
                                    &key[0])) { ERR_print_errors_fp(stdout); };
-            write_key_file(keyfilename, &key[0], keylen);
-            printf("Write key to keyfile %s\n", keyfilename.c_str());
+            return key;
         }
 
-        generate_key::generate_key(const std::string &keyfilename, int keylen, const std::string &password,
+        std::vector<uint8_t>
+        generate_key::make_pass_key(int keylen, const std::string &password,
                                    const unsigned char *salt, int saltlen, int hashrounds)
         {
-            std::vector<unsigned char> key(keylen, 0);
+            std::vector<uint8_t > key(keylen, 0);
             if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, salt, saltlen, hashrounds, EVP_sha512(), keylen,
                                    &key[0])) { ERR_print_errors_fp(stdout); };
-            write_key_file(keyfilename, &key[0], keylen);
-            printf("Write key to keyfile %s\n", keyfilename.c_str());
+            return key;
         }
 
-        void
-        generate_key::read_key_file(const std::string filename, unsigned char *key, int keylen){
-            std::ifstream keyfile(filename.c_str(),std::ios::in | std::ios::binary);
-            if (!(keyfile.is_open())) { throw std::runtime_error("key file read error"); }
-            keyfile.read((char *) &key[0], keylen);
-            keyfile.close();
+        std::vector<uint8_t>
+        generate_key::make_rand_key(int keylen){
+            std::vector<uint8_t> key(keylen, 0);
+            RAND_bytes(&key[0], keylen);
+            return key;
         }
 
-        void
-        generate_key::write_key_file(const std::string filename, unsigned char *key, int keylen){
-            std::ofstream keyfile(filename.c_str(), std::ios::out | std::ios::binary);
-            if (!(keyfile.is_open())) { throw std::runtime_error("key file write error"); }
-            keyfile.write((char *) &key[0], keylen);
-            keyfile.close();
-        }
+
 
         generate_key::~generate_key()
         {

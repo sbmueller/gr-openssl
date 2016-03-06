@@ -29,7 +29,7 @@
 namespace gr {
     namespace crypto {
 
-        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::string keyfilename)
+        sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding,const std::vector<uint8_t> key)
         {
             ERR_load_crypto_strings();
             OpenSSL_add_all_ciphers();
@@ -42,9 +42,8 @@ namespace gr {
                    ciph_name.c_str(), d_evp_ciph->iv_len, d_evp_ciph->key_len, d_evp_ciph->block_size);
 
             d_padding = padding;
-            d_keyfilename = keyfilename;
-            d_key = std::vector<unsigned char> (d_evp_ciph->key_len,0);
-            generate_key::read_key_file(d_keyfilename, &d_key[0], d_evp_ciph->key_len);
+            d_key = key;
+
         }
 
 

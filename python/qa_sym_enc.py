@@ -22,59 +22,46 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 
-#import crypto_swig as crypto
+# import crypto_swig as crypto
 import numpy
 import crypto
 import pmt
 from time import sleep
 
 
-class qa_sym_enc (gr_unittest.TestCase):
+class qa_sym_enc(gr_unittest.TestCase):
+    def setUp(self):
+        self.tb = gr.top_block()
 
-    def setUp (self):
-        self.tb = gr.top_block ()
-
-
-
-    def tearDown (self):
+    def tearDown(self):
         self.tb = None
 
-    #test correct encryption and decryption
-    def test_001_t (self):
+    # test correct encryption and decryption
+    def test_001_t(self):
         cipher_name = "aes-256-cbc"
-        keyfilename = "test_key.deleteme"
-        plainlen = 160;
-
+        plainlen = 1600
+        packet_len = 1600
         key = bytearray(numpy.random.randint(0, 256, 32).tolist())
-        plain=bytearray(numpy.random.randint(0, 256, plainlen).tolist())
+        plain = bytearray(numpy.random.randint(0, 256, plainlen).tolist())
 
-        self.write_bytes_to_file(key, keyfilename)
-
-        cipher_desc = crypto.sym_ciph_desc(cipher_name, False, keyfilename)
+        cipher_desc = crypto.sym_ciph_desc(cipher_name, False, key)
         src = blocks.vector_source_b(plain)
-        stts = blocks.stream_to_tagged_stream(1,1,160,"packet_len")
+        stts = blocks.stream_to_tagged_stream(1, 1, packet_len, "packet_len")
         tstpdu = blocks.tagged_stream_to_pdu(blocks.byte_t, "packet_len")
         enc = crypto.sym_enc(cipher_desc)
         dec = crypto.sym_dec(cipher_desc)
         snk = blocks.message_debug()
 
         self.tb.connect(src, stts, tstpdu);
-        self.tb.msg_connect(tstpdu,"pdus", enc, "pdus")
+        self.tb.msg_connect(tstpdu, "pdus", enc, "pdus")
         self.tb.msg_connect(enc, "pdus", dec, "pdus")
         self.tb.msg_connect(dec, "pdus", snk, "store")
 
         self.tb.run()
 
+        num_msg = snk.num_messages()
         decrypted = bytearray(pmt.u8vector_elements(pmt.cdr((snk.get_message(0)))))
-
         self.assertEqual(plain, decrypted)
-
-
-    def write_bytes_to_file(self, b, filename):
-        f = open(filename, "wb")
-        f.write(b)
-        f.close()
-        # check data
 
 
 if __name__ == '__main__':

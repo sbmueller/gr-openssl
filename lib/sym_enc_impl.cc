@@ -52,9 +52,8 @@ namespace gr {
 
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_key.assign(d_ciph->key_len, 0);
             d_iv.assign(d_ciph->iv_len, 0);
-            desc->get_key(d_key);
+            d_key = desc->get_key();
             d_padding = desc->get_padding();
 
             //random iv

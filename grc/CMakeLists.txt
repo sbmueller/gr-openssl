@@ -17,8 +17,6 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 install(FILES
-    crypto_generate_key_rand.xml
-    crypto_generate_key_pass.xml
     crypto_sym_ciph_desc.xml
     crypto_sym_enc_tagged_bb.xml
     crypto_sym_dec_tagged_bb.xml

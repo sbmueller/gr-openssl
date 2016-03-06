@@ -93,7 +93,61 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(328, 11)</value>
+      <value>(320, 11)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>key</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>crypto.generate_key.make_pass_key(32,password)</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(496, 11)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>password</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>"beer"</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(8, 75)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -216,53 +270,6 @@
     <param>
       <key>vlen</key>
       <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_pdu_set</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1024, 88)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_pdu_set_0</value>
-    </param>
-    <param>
-      <key>k</key>
-      <value>pmt.intern("key")</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>v</key>
-      <value>pmt.intern("value")</value>
     </param>
   </block>
   <block>
@@ -547,12 +554,12 @@
       <value>crypto_sym_ciph_desc_0</value>
     </param>
     <param>
-      <key>keyfile</key>
-      <value>mykey.key</value>
-    </param>
-    <param>
       <key>padding</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>key</key>
+      <value>key</value>
     </param>
   </block>
   <block>
@@ -665,7 +672,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(704, 43)</value>
+      <value>(680, 123)</value>
     </param>
     <param>
       <key>gui_hint</key>

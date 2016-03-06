@@ -11,7 +11,7 @@
        * key (makes the value accessible as $keyname, e.g. in the make node)
        * type -->
   <param>
-    <name>cipher description</name>
+    <name>cipher definition</name>
     <key>cipher</key>
     <type>string</type>
   </param>

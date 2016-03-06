@@ -93,6 +93,33 @@
     </param>
     <param>
       <key>_coordinate</key>
+      <value>(192, 11)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>key</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>crypto.generate_key.make_rand_key(32)</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
       <value>(8, 75)</value>
     </param>
     <param>
@@ -266,7 +293,7 @@
     </param>
     <param>
       <key>samples_per_second</key>
-      <value>samp_rate</value>
+      <value>samp_rate*2</value>
     </param>
     <param>
       <key>type</key>
@@ -285,7 +312,7 @@
     </param>
     <param>
       <key>ciph_name</key>
-      <value>"aes-256-cbc"</value>
+      <value>"aes-256-ctr"</value>
     </param>
     <param>
       <key>comment</key>
@@ -297,7 +324,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(672, 83)</value>
+      <value>(664, 83)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -308,12 +335,12 @@
       <value>crypto_sym_ciph_desc_0</value>
     </param>
     <param>
-      <key>keyfile</key>
-      <value>mykey.key</value>
-    </param>
-    <param>
       <key>padding</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>key</key>
+      <value>key</value>
     </param>
   </block>
   <block>
@@ -324,7 +351,7 @@
     </param>
     <param>
       <key>ciph_name</key>
-      <value>"aes-256-cbc"</value>
+      <value>"aes-256-ctr"</value>
     </param>
     <param>
       <key>comment</key>
@@ -336,7 +363,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(672, 315)</value>
+      <value>(664, 315)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -347,12 +374,12 @@
       <value>crypto_sym_ciph_desc_1</value>
     </param>
     <param>
-      <key>keyfile</key>
-      <value>mykey.key</value>
-    </param>
-    <param>
       <key>padding</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>key</key>
+      <value>key</value>
     </param>
   </block>
   <block>
@@ -395,7 +422,7 @@
     </param>
     <param>
       <key>cipher</key>
-      <value>crypto_sym_ciph_desc_0</value>
+      <value>crypto_sym_ciph_desc_1</value>
     </param>
     <param>
       <key>packet_key_len</key>
@@ -442,7 +469,7 @@
     </param>
     <param>
       <key>cipher</key>
-      <value>crypto_sym_ciph_desc_1</value>
+      <value>crypto_sym_ciph_desc_0</value>
     </param>
     <param>
       <key>key_len</key>
@@ -477,7 +504,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(408, 329)</value>
+      <value>(432, 377)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -528,7 +555,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(200, 323)</value>
+      <value>(232, 363)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -540,7 +567,7 @@
     </param>
     <param>
       <key>graph_type</key>
-      <value>qtgui.NUM_GRAPH_HORIZ</value>
+      <value>qtgui.NUM_GRAPH_NONE</value>
     </param>
     <param>
       <key>id</key>
@@ -720,7 +747,7 @@
     </param>
     <param>
       <key>name</key>
-      <value>""</value>
+      <value>"BER"</value>
     </param>
     <param>
       <key>nconnections</key>

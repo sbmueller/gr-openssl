@@ -7,7 +7,7 @@
   <make>crypto.sym_dec(self.$ciph_desc())</make>
 
   <param>
-    <name>cipher description</name>
+    <name>cipher definition</name>
     <key>ciph_desc</key>
     <type>string</type>
   </param>

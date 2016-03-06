@@ -7,7 +7,7 @@
   <make>crypto.sym_enc(self.$cipher())</make>
 
   <param>
-    <name>cipher description</name>
+    <name>cipher definition</name>
     <key>cipher</key>
     <type>string</type>
   </param>

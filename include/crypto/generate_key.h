@@ -27,33 +27,33 @@
 #include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
+#include <stdint.h>
 #include <fstream>
 #include <stdexcept>
 
 namespace gr {
-  namespace crypto {
+    namespace crypto {
 
-    /*!
-     * \brief generate keys for encryption algorithms
-     *
-     *
-     */
-    class CRYPTO_API generate_key
-    {
-    public:
-        generate_key(const std::string &keyfilename, int keylen, const std::string &password,
-                     const unsigned char *salt, int saltlen, int hashrounds);
-        generate_key(const std::string &keyfilename, int keylen, const std::string &password);
-        generate_key(const std::string &keyfilename, int keylen);
+        /*!
+         * \brief generate keys for encryption algorithms
+         *
+         *
+         */
+        class CRYPTO_API generate_key
+        {
+        public:
+            static std::vector<uint8_t> make_pass_key(int keylen, const std::string &password,
+                                                      const unsigned char *salt, int saltlen, int hashrounds);
+            static std::vector<uint8_t> make_pass_key(int keylen, const std::string &password);
+            static std::vector<uint8_t> make_rand_key(int keylen);
 
-        static void read_key_file(const std::string filename, unsigned char *key, int keylen);
-        static void write_key_file(const std::string filename, unsigned char *key, int keylen);
+            ~generate_key();
 
-      ~generate_key();
-    private:
-    };
+        private:
 
-  } // namespace crypto
+        };
+
+    } // namespace crypto
 } // namespace gr
 
 #endif /* INCLUDED_CRYPTO_GENERATE_KEY_H */
