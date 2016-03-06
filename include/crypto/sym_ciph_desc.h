@@ -37,7 +37,8 @@ namespace gr {
     namespace crypto {
 
         /*!
-         * \brief describes a symmetric block cipher
+         * \brief defines a symmetric block/stream cipher
+         *
          *
          */
         class CRYPTO_API sym_ciph_desc

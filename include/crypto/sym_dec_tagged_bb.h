@@ -30,8 +30,9 @@ namespace gr {
   namespace crypto {
 
     /*!
-     * \brief symmetric key encryption with block ciphers
+     * \brief provides symmetric block/stream encryption
      * \ingroup crypto
+     *
      *
      */
     class CRYPTO_API sym_dec_tagged_bb : virtual public gr::tagged_stream_block

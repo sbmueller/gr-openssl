@@ -30,7 +30,7 @@ namespace gr {
     namespace crypto {
 
         /*!
-         * \brief symmetric key encryption with block ciphers
+         * \brief provides symmetric block/stream decryption
          * \ingroup crypto
          *
          */

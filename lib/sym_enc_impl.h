@@ -34,14 +34,12 @@ namespace gr {
         EVP_CIPHER_CTX *d_ciph_ctx;
         bool d_padding;
 
-        std::vector<uint8_t> d_key;
-        std::vector<uint8_t> d_iv;
+        std::vector<unsigned char> d_key;
+        std::vector<unsigned char> d_iv;
 
-        pmt::pmt_t d_iv_key;
-        pmt::pmt_t d_out_port_id;
-        pmt::pmt_t d_in_port_id;
+        std::vector<unsigned char> d_out_buffer;
 
-
+        pmt::pmt_t d_iv_id;
 
      public:
       sym_enc_impl(sym_ciph_desc &ciph_desc);

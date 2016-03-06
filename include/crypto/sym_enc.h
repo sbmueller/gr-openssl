@@ -30,8 +30,10 @@ namespace gr {
   namespace crypto {
 
     /*!
-     * \brief <+description of block+>
+     * \brief provides symmetric block/stream encryption
      * \ingroup crypto
+     *
+
      *
      */
     class CRYPTO_API sym_enc : virtual public gr::block

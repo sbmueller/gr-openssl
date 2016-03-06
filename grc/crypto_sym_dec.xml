@@ -13,13 +13,13 @@
   </param>
 
   <sink>
-    <name>encrypted</name>
+    <name>pdus</name>
     <type>message</type>
     <optional>1</optional>
   </sink>
 
   <source>
-    <name>decrypted</name>
+    <name>pdus</name>
     <type>message</type>
     <optional>1</optional>
   </source>

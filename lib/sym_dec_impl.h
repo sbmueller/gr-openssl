@@ -37,10 +37,12 @@ namespace gr {
 
         std::vector<unsigned char> d_key;
         std::vector<unsigned char> d_iv;
+        std::vector<unsigned char> d_out_buffer;
 
-        pmt::pmt_t d_iv_key;
-        pmt::pmt_t d_out_port_id;
-        pmt::pmt_t d_in_port_id;
+
+        pmt::pmt_t d_iv_id;
+
+
 
 
      public:

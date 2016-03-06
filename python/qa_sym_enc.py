@@ -21,6 +21,7 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
+
 #import crypto_swig as crypto
 import numpy
 import crypto
@@ -40,7 +41,7 @@ class qa_sym_enc (gr_unittest.TestCase):
 
     #test correct encryption and decryption
     def test_001_t (self):
-        cipher_name = "aes-256-cbc"
+        """cipher_name = "aes-256-cbc"
         keyfilename = "test_key.deleteme"
         plainlen = 32;
 
@@ -50,14 +51,17 @@ class qa_sym_enc (gr_unittest.TestCase):
         self.write_bytes_to_file(key, keyfilename)
 
         cipher_desc = crypto.sym_ciph_desc(cipher_name, False, keyfilename)
-        src = blocks.message_strobe(pmt.init_u8vector(plainlen, plain),50)
+        src = blocks.vector_source_b(plain)
+        stts = blocks.stream_to_tagged_stream(1,1,16,"packet_len")
+        tstpdu = blocks.tagged_stream_to_pdu(gr.blocks.pdu.byte_t, 1)
         enc = crypto.sym_enc(cipher_desc)
         dec = crypto.sym_dec(cipher_desc)
         snk = blocks.message_debug()
 
-        self.tb.msg_connect(src,"strobe", enc, "plain")
-        self.tb.msg_connect(enc, "encrypted", dec, "encrypted")
-        self.tb.msg_connect(dec, "decrypted", snk, "store")
+        self.tb.connect(src, stts, tstpdu);
+        self.tb.msg_connect(tstpdu,"pdus", enc, "pdus")
+        self.tb.msg_connect(enc, "pdus", dec, "pdus")
+        self.tb.msg_connect(dec, "pdus", snk, "store")
 
         self.tb.start()
         sleep(0.75)
@@ -69,7 +73,7 @@ class qa_sym_enc (gr_unittest.TestCase):
         decrypted = bytearray(pmt.u8vector_elements(snk.get_message(0)))
 
         self.assertEqual(plain, decrypted)
-
+        """
 
     def write_bytes_to_file(self, b, filename):
         f = open(filename, "wb")

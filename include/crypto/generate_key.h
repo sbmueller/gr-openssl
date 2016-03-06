@@ -36,6 +36,7 @@ namespace gr {
     /*!
      * \brief generate keys for encryption algorithms
      *
+     *
      */
     class CRYPTO_API generate_key
     {
