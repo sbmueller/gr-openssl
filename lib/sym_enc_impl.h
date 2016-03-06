@@ -33,6 +33,7 @@ namespace gr {
         const EVP_CIPHER *d_ciph;
         EVP_CIPHER_CTX *d_ciph_ctx;
         bool d_padding;
+        unsigned long d_pdu_ctr;
 
         std::vector<unsigned char> d_key;
         std::vector<unsigned char> d_iv;
@@ -46,7 +47,6 @@ namespace gr {
       ~sym_enc_impl();
 
       void msg_handler(pmt::pmt_t msg);
-      bool start();
 
 
     };

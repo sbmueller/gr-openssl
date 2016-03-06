@@ -41,9 +41,9 @@ class qa_sym_enc (gr_unittest.TestCase):
 
     #test correct encryption and decryption
     def test_001_t (self):
-        """cipher_name = "aes-256-cbc"
+        cipher_name = "aes-256-cbc"
         keyfilename = "test_key.deleteme"
-        plainlen = 32;
+        plainlen = 160;
 
         key = bytearray(numpy.random.randint(0, 256, 32).tolist())
         plain=bytearray(numpy.random.randint(0, 256, plainlen).tolist())
@@ -52,8 +52,8 @@ class qa_sym_enc (gr_unittest.TestCase):
 
         cipher_desc = crypto.sym_ciph_desc(cipher_name, False, keyfilename)
         src = blocks.vector_source_b(plain)
-        stts = blocks.stream_to_tagged_stream(1,1,16,"packet_len")
-        tstpdu = blocks.tagged_stream_to_pdu(gr.blocks.pdu.byte_t, 1)
+        stts = blocks.stream_to_tagged_stream(1,1,160,"packet_len")
+        tstpdu = blocks.tagged_stream_to_pdu(blocks.byte_t, "packet_len")
         enc = crypto.sym_enc(cipher_desc)
         dec = crypto.sym_dec(cipher_desc)
         snk = blocks.message_debug()
@@ -63,17 +63,12 @@ class qa_sym_enc (gr_unittest.TestCase):
         self.tb.msg_connect(enc, "pdus", dec, "pdus")
         self.tb.msg_connect(dec, "pdus", snk, "store")
 
-        self.tb.start()
-        sleep(0.75)
-        src.set_period(1000000);
-        self.tb.stop()
-        self.tb.wait()
+        self.tb.run()
 
-        #print pmt.u8vector_elements(snk.get_message(0))
-        decrypted = bytearray(pmt.u8vector_elements(snk.get_message(0)))
+        decrypted = bytearray(pmt.u8vector_elements(pmt.cdr((snk.get_message(0)))))
 
         self.assertEqual(plain, decrypted)
-        """
+
 
     def write_bytes_to_file(self, b, filename):
         f = open(filename, "wb")

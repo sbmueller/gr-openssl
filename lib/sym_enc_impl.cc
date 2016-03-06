@@ -44,6 +44,7 @@ namespace gr {
                             gr::io_signature::make(0, 0, 0))
         {
             d_iv_id = pmt::mp("iv");
+            d_pdu_ctr = 0;
 
             message_port_register_out(pmt::mp("pdus"));
             message_port_register_in(pmt::mp("pdus"));
@@ -51,8 +52,8 @@ namespace gr {
 
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_key.assign(d_ciph->key_len,0);
-            d_iv.assign(d_ciph->iv_len,0);
+            d_key.assign(d_ciph->key_len, 0);
+            d_iv.assign(d_ciph->iv_len, 0);
             desc->get_key(d_key);
             d_padding = desc->get_padding();
 
@@ -74,34 +75,25 @@ namespace gr {
             EVP_CIPHER_CTX_free(d_ciph_ctx);
         }
 
-        bool
-        sym_enc_impl::start()
-        {
-            //send first iv instantly
-            pmt::pmt_t dd = pmt::dict_add(pmt::make_dict(), d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
-            message_port_pub(pmt::mp("pdus"), pmt::cons(dd, pmt::make_u8vector(0,0)));
-            return true;
-         }
-
         void
         sym_enc_impl::msg_handler(pmt::pmt_t msg)
         {
             //check PDU
-            if(!pmt::is_pair(msg)){
+            if (!pmt::is_pair(msg)) {
                 throw std::runtime_error("sym_enc received non PDU input");
             }
             pmt::pmt_t meta = pmt::car(msg);
             pmt::pmt_t data = pmt::cdr(msg);
 
-            if(pmt::is_null(meta)){
+            if (pmt::is_null(meta)) {
                 meta = pmt::make_dict();
             }
-            else if(!pmt::is_dict(meta)){
+            else if (!pmt::is_dict(meta)) {
                 throw std::runtime_error("sym_enc received non PDU input");
             }
 
             //new iv requested
-            if (pmt::dict_has_key(meta,d_iv_id)) {
+            if (pmt::dict_has_key(meta, d_iv_id)) {
 
                 //encrypt and send remaining data if any
                 int nout = 0;
@@ -109,7 +101,7 @@ namespace gr {
                 if (!EVP_EncryptFinal_ex(d_ciph_ctx, &d_out_buffer[0], &nout))
                     ERR_print_errors_fp(stdout);
                 //publish
-                if(nout!=0)
+                if (nout != 0)
                     message_port_pub(pmt::mp("pdus"), pmt::cons(meta, pmt::init_u8vector(nout, d_out_buffer)));
 
                 //generate random iv and set it in meta
@@ -121,26 +113,34 @@ namespace gr {
                     ERR_print_errors_fp(stdout);
                 if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
                     ERR_print_errors_fp(stdout);
-
             }
 
             //data to encrypt
-            if (pmt::is_u8vector(data)) {
+            if (pmt::is_u8vector(data) && pmt::length(data) != 0) {
 
                 size_t inlen = pmt::length(data);
                 const unsigned char *in = u8vector_elements(data, inlen);
                 d_out_buffer.reserve(inlen + d_ciph->block_size);
 
                 //encrypt
-                int nout=0;
+                int nout = 0;
                 if (!EVP_EncryptUpdate(d_ciph_ctx, &d_out_buffer[0], &nout, in, inlen))
                     ERR_print_errors_fp(stdout);
 
                 data = pmt::init_u8vector(nout, d_out_buffer);
+            } else {
+                throw std::runtime_error("sym_enc pdu data field not byte vector with data");
             }
 
+            //add start iv to first packet
+            if (d_pdu_ctr == 0) {
+                meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
+            }
             //publish
-            message_port_pub(pmt::mp("pdus"), pmt::cons(meta,data));
+            if (pmt::length(data) != 0) {
+                message_port_pub(pmt::mp("pdus"), pmt::cons(meta, data));
+                d_pdu_ctr++;
+            }
         }
 
 
