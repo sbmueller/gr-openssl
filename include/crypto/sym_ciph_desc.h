@@ -32,8 +32,6 @@
 #include <openssl/rand.h>
 
 
-
-
 namespace gr {
     namespace crypto {
 
@@ -48,17 +46,22 @@ namespace gr {
             typedef boost::shared_ptr<sym_ciph_desc> sptr;
 
             sym_ciph_desc(const std::string ciph_name, bool padding, const std::vector<uint8_t> key);
+
             ~sym_ciph_desc();
 
             const EVP_CIPHER *get_evp_ciph() { return d_evp_ciph; };
+
             bool get_padding() { return d_padding; };
-            std::vector <unsigned char> get_key(){ return d_key;}
+
+            std::vector<unsigned char> get_key() { return d_key; }
 
         private:
             const EVP_CIPHER *d_evp_ciph;
             bool d_padding;
-            std::vector <unsigned char> d_key;
+            std::vector<unsigned char> d_key;
+            static int cnt_ciph;
         };
+
 
     } // namespace crypto
 } // namespace gr

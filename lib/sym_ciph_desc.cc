@@ -28,11 +28,16 @@
 namespace gr {
     namespace crypto {
 
+        int sym_ciph_desc::cnt_ciph = 0;
+
         sym_ciph_desc::sym_ciph_desc(const std::string ciph_name, bool padding, const std::vector<uint8_t> key)
         {
-            ERR_load_crypto_strings();
-            OpenSSL_add_all_ciphers();
-            OPENSSL_config(NULL);
+            cnt_ciph++;
+            if(cnt_ciph == 1) {
+                ERR_load_crypto_strings();
+                OpenSSL_add_all_ciphers();
+                OPENSSL_config(NULL);
+            }
 
             d_evp_ciph = EVP_get_cipherbyname(ciph_name.c_str());
             if (d_evp_ciph == NULL) {
@@ -51,6 +56,7 @@ namespace gr {
         sym_ciph_desc::~sym_ciph_desc()
         {
             d_key.assign(d_evp_ciph->key_len, 0);
+            cnt_ciph--;
         }
 
     } /* namespace crypto */
