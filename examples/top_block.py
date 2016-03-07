@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Sun Mar  6 06:13:29 2016
+# Generated: Mon Mar  7 02:02:46 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -17,15 +17,16 @@ if __name__ == '__main__':
             print "Warning: failed to XInitThreads()"
 
 from PyQt4 import Qt
-from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
+from gnuradio import fec
 from gnuradio import gr
 from gnuradio import qtgui
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import crypto
+import numpy
 import sip
 import sys
 
@@ -59,128 +60,61 @@ class top_block(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 100000
+        self.key = key = crypto.generate_key.make_rand_key(32)
 
         ##################################################
         # Blocks
         ##################################################
-        self.crypto_sym_ciph_desc_0 = crypto.sym_ciph_desc("aes-256-ctr", False, "mykey.key")
-        self.qtgui_time_raster_sink_x_0_3 = qtgui.time_raster_sink_b(
-        	samp_rate,
-        	25,
-        	100,
-        	([]),
-        	([]),
-        	"decrypted",
-        	1,
-        	)
-        
-        self.qtgui_time_raster_sink_x_0_3.set_update_time(0.10)
-        self.qtgui_time_raster_sink_x_0_3.set_intensity_range(-128, 127)
-        self.qtgui_time_raster_sink_x_0_3.enable_grid(False)
-        self.qtgui_time_raster_sink_x_0_3.enable_axis_labels(True)
+        self.crypto_sym_ciph_desc_1 = crypto.sym_ciph_desc("aes-256-ctr", False, (key))
+        self.crypto_sym_ciph_desc_0 = crypto.sym_ciph_desc("aes-256-ctr", False, (key))
+        self.qtgui_number_sink_0 = qtgui.number_sink(
+            gr.sizeof_float,
+            0,
+            qtgui.NUM_GRAPH_NONE,
+            1
+        )
+        self.qtgui_number_sink_0.set_update_time(0.10)
+        self.qtgui_number_sink_0.set_title("BER")
         
         labels = ["", "", "", "", "",
                   "", "", "", "", ""]
-        colors = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
+        units = ["", "", "", "", "",
+                 "", "", "", "", ""]
+        colors = [("black", "black"), ("black", "black"), ("black", "black"), ("black", "black"), ("black", "black"),
+                  ("black", "black"), ("black", "black"), ("black", "black"), ("black", "black"), ("black", "black")]
+        factor = [1, 1, 1, 1, 1,
+                  1, 1, 1, 1, 1]
         for i in xrange(1):
+            self.qtgui_number_sink_0.set_min(i, -7)
+            self.qtgui_number_sink_0.set_max(i, 0)
+            self.qtgui_number_sink_0.set_color(i, colors[i][0], colors[i][1])
             if len(labels[i]) == 0:
-                self.qtgui_time_raster_sink_x_0_3.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_number_sink_0.set_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_time_raster_sink_x_0_3.set_line_label(i, labels[i])
-            self.qtgui_time_raster_sink_x_0_3.set_color_map(i, colors[i])
-            self.qtgui_time_raster_sink_x_0_3.set_line_alpha(i, alphas[i])
+                self.qtgui_number_sink_0.set_label(i, labels[i])
+            self.qtgui_number_sink_0.set_unit(i, units[i])
+            self.qtgui_number_sink_0.set_factor(i, factor[i])
         
-        self._qtgui_time_raster_sink_x_0_3_win = sip.wrapinstance(self.qtgui_time_raster_sink_x_0_3.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_raster_sink_x_0_3_win)
-        self.qtgui_time_raster_sink_x_0_2 = qtgui.time_raster_sink_b(
-        	samp_rate,
-        	25,
-        	100,
-        	([]),
-        	([]),
-        	"cipher",
-        	1,
-        	)
-        
-        self.qtgui_time_raster_sink_x_0_2.set_update_time(0.10)
-        self.qtgui_time_raster_sink_x_0_2.set_intensity_range(-128, 127)
-        self.qtgui_time_raster_sink_x_0_2.enable_grid(False)
-        self.qtgui_time_raster_sink_x_0_2.enable_axis_labels(True)
-        
-        labels = ["", "", "", "", "",
-                  "", "", "", "", ""]
-        colors = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_time_raster_sink_x_0_2.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_time_raster_sink_x_0_2.set_line_label(i, labels[i])
-            self.qtgui_time_raster_sink_x_0_2.set_color_map(i, colors[i])
-            self.qtgui_time_raster_sink_x_0_2.set_line_alpha(i, alphas[i])
-        
-        self._qtgui_time_raster_sink_x_0_2_win = sip.wrapinstance(self.qtgui_time_raster_sink_x_0_2.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_raster_sink_x_0_2_win)
-        self.qtgui_time_raster_sink_x_0 = qtgui.time_raster_sink_b(
-        	samp_rate,
-        	25,
-        	100,
-        	([]),
-        	([]),
-        	"plain",
-        	1,
-        	)
-        
-        self.qtgui_time_raster_sink_x_0.set_update_time(0.10)
-        self.qtgui_time_raster_sink_x_0.set_intensity_range(-128, 127)
-        self.qtgui_time_raster_sink_x_0.enable_grid(True)
-        self.qtgui_time_raster_sink_x_0.enable_axis_labels(True)
-        
-        labels = ["", "", "", "", "",
-                  "", "", "", "", ""]
-        colors = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_time_raster_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_time_raster_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_time_raster_sink_x_0.set_color_map(i, colors[i])
-            self.qtgui_time_raster_sink_x_0.set_line_alpha(i, alphas[i])
-        
-        self._qtgui_time_raster_sink_x_0_win = sip.wrapinstance(self.qtgui_time_raster_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_raster_sink_x_0_win)
-        self.crypto_sym_enc_0 = crypto.sym_enc(self.crypto_sym_ciph_desc_0)
-        self.crypto_sym_dec_0 = crypto.sym_dec(self.crypto_sym_ciph_desc_0)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
-        self.blocks_tagged_stream_to_pdu_0 = blocks.tagged_stream_to_pdu(blocks.byte_t, "packet_len")
-        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 320, "packet_len")
-        self.blocks_pdu_to_tagged_stream_0_0 = blocks.pdu_to_tagged_stream(blocks.byte_t, "packet_len")
-        self.blocks_pdu_to_tagged_stream_0 = blocks.pdu_to_tagged_stream(blocks.byte_t, "packet_len")
-        self.blocks_float_to_char_0 = blocks.float_to_char(1, 125)
-        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 1000, 1, 0)
+        self.qtgui_number_sink_0.enable_autoscale(False)
+        self._qtgui_number_sink_0_win = sip.wrapinstance(self.qtgui_number_sink_0.pyqwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_number_sink_0_win)
+        self.fec_ber_bf_0 = fec.ber_bf(False, 100, -7.0)
+        self.crypto_sym_enc_tagged_bb_0 = crypto.sym_enc_tagged_bb(self.crypto_sym_ciph_desc_0, "packet_len")
+        self.crypto_sym_dec_tagged_bb_0 = crypto.sym_dec_tagged_bb(self.crypto_sym_ciph_desc_1, "packet_len")
+        self.blocks_throttle_0_0 = blocks.throttle(gr.sizeof_char*1, samp_rate*2,True)
+        self.blocks_stream_to_tagged_stream_0 = blocks.stream_to_tagged_stream(gr.sizeof_char, 1, 1600, "packet_len")
+        self.analog_random_source_x_0 = blocks.vector_source_b(map(int, numpy.random.randint(0, 256, 100000)), True)
 
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.blocks_tagged_stream_to_pdu_0, 'pdus'), (self.crypto_sym_enc_0, 'pdus'))    
-        self.msg_connect((self.crypto_sym_dec_0, 'pdus'), (self.blocks_pdu_to_tagged_stream_0, 'pdus'))    
-        self.msg_connect((self.crypto_sym_enc_0, 'pdus'), (self.blocks_pdu_to_tagged_stream_0_0, 'pdus'))    
-        self.msg_connect((self.crypto_sym_enc_0, 'pdus'), (self.crypto_sym_dec_0, 'pdus'))    
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_float_to_char_0, 0))    
-        self.connect((self.blocks_float_to_char_0, 0), (self.blocks_throttle_0, 0))    
-        self.connect((self.blocks_pdu_to_tagged_stream_0, 0), (self.qtgui_time_raster_sink_x_0_3, 0))    
-        self.connect((self.blocks_pdu_to_tagged_stream_0_0, 0), (self.qtgui_time_raster_sink_x_0_2, 0))    
-        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.blocks_tagged_stream_to_pdu_0, 0))    
-        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.qtgui_time_raster_sink_x_0, 0))    
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))    
+        self.connect((self.analog_random_source_x_0, 0), (self.blocks_throttle_0_0, 0))    
+        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.crypto_sym_enc_tagged_bb_0, 0))    
+        self.connect((self.blocks_stream_to_tagged_stream_0, 0), (self.fec_ber_bf_0, 1))    
+        self.connect((self.blocks_throttle_0_0, 0), (self.blocks_stream_to_tagged_stream_0, 0))    
+        self.connect((self.crypto_sym_dec_tagged_bb_0, 0), (self.fec_ber_bf_0, 0))    
+        self.connect((self.crypto_sym_enc_tagged_bb_0, 0), (self.crypto_sym_dec_tagged_bb_0, 0))    
+        self.connect((self.fec_ber_bf_0, 0), (self.qtgui_number_sink_0, 0))    
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "top_block")
@@ -193,8 +127,13 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.blocks_throttle_0_0.set_sample_rate(self.samp_rate*2)
+
+    def get_key(self):
+        return self.key
+
+    def set_key(self, key):
+        self.key = key
 
 
 def main(top_block_cls=top_block, options=None):

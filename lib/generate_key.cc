@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2016 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2016 Kristian Maier.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,28 +32,30 @@ namespace gr {
         generate_key::make_pass_key(int keylen, const std::string &password)
         {
             std::vector<uint8_t> key(keylen, 0);
-            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 20000, EVP_sha512(), keylen,
-                                   &key[0])) { ERR_print_errors_fp(stdout); };
+            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 20000, EVP_sha256(), keylen, &key[0])) {
+                ERR_print_errors_fp(stdout);
+            }
             return key;
         }
 
         std::vector<uint8_t>
         generate_key::make_pass_key(int keylen, const std::string &password,
-                                   const unsigned char *salt, int saltlen, int hashrounds)
+                                    const unsigned char *salt, int saltlen, int hashrounds)
         {
-            std::vector<uint8_t > key(keylen, 0);
-            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, salt, saltlen, hashrounds, EVP_sha512(), keylen,
-                                   &key[0])) { ERR_print_errors_fp(stdout); };
+            std::vector<uint8_t> key(keylen, 0);
+            if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, salt, saltlen, hashrounds, EVP_sha256(), keylen, &key[0])) {
+                ERR_print_errors_fp(stdout);
+            }
             return key;
         }
 
         std::vector<uint8_t>
-        generate_key::make_rand_key(int keylen){
+        generate_key::make_rand_key(int keylen)
+        {
             std::vector<uint8_t> key(keylen, 0);
             RAND_bytes(&key[0], keylen);
             return key;
         }
-
 
 
         generate_key::~generate_key()

@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2016 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2016 Kristian Maier.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ namespace gr {
         const EVP_CIPHER *d_ciph;
         EVP_CIPHER_CTX *d_ciph_ctx;
 
-        std::vector<unsigned char> d_key;
-        std::vector<unsigned char> d_iv;
+        std::vector<uint8_t> d_key;
+        std::vector<uint8_t> d_iv;
 
         pmt::pmt_t d_iv_tagkey;
         bool d_have_iv;

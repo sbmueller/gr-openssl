@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2016 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2016 Kristian Maier.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,34 +25,31 @@
 #include <crypto/sym_ciph_desc.h>
 
 namespace gr {
-  namespace crypto {
+    namespace crypto {
 
-    class sym_dec_impl : public sym_dec
-    {
-     private:
-        const EVP_CIPHER *d_ciph;
-        EVP_CIPHER_CTX *d_ciph_ctx;
-        bool d_have_iv;
-        bool d_padding;
+        class sym_dec_impl : public sym_dec
+        {
+        private:
+            const EVP_CIPHER *d_ciph;
+            EVP_CIPHER_CTX *d_ciph_ctx;
+            bool d_have_iv;
+            bool d_padding;
 
-        std::vector<unsigned char> d_key;
-        std::vector<unsigned char> d_iv;
-        std::vector<unsigned char> d_out_buffer;
+            std::vector<unsigned char> d_key;
+            std::vector<unsigned char> d_iv;
+            std::vector<unsigned char> d_out_buffer;
 
+            pmt::pmt_t d_iv_id;
 
-        pmt::pmt_t d_iv_id;
+        public:
+            sym_dec_impl(sym_ciph_desc &ciph_desc);
 
+            ~sym_dec_impl();
 
+            void msg_handler(pmt::pmt_t msg);
+        };
 
-
-     public:
-      sym_dec_impl(sym_ciph_desc &ciph_desc);
-      ~sym_dec_impl();
-
-      void msg_handler(pmt::pmt_t msg);
-    };
-
-  } // namespace crypto
+    } // namespace crypto
 } // namespace gr
 
 #endif /* INCLUDED_CRYPTO_SYM_DEC_IMPL_H */

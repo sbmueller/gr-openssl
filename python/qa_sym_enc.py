@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # 
-# Copyright 2016 <+YOU OR YOUR COMPANY+>.
+# Copyright 2016 Kristian Maier.
 # 
 # This is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -62,6 +62,10 @@ class qa_sym_enc(gr_unittest.TestCase):
         num_msg = snk.num_messages()
         decrypted = bytearray(pmt.u8vector_elements(pmt.cdr((snk.get_message(0)))))
         self.assertEqual(plain, decrypted)
+
+    def test_002_t(self):
+
+        self.tb.run()
 
 
 if __name__ == '__main__':

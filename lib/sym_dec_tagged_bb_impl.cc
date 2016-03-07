@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2016 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2016 Kristian Maier.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,24 +45,26 @@ namespace gr {
         {
             sym_ciph_desc *desc = &ciph_desc;
             d_ciph = desc->get_evp_ciph();
-            d_iv.assign(d_ciph->iv_len,0);
+            d_iv.assign(d_ciph->iv_len, 0);
             d_key = desc->get_key();
 
             d_ciph_ctx = EVP_CIPHER_CTX_new();
 
             //initialize decryption if iv is not needed
-            d_have_iv = false || (d_ciph->iv_len==0);
+            d_have_iv = false || (d_ciph->iv_len == 0);
             if (d_have_iv) {
-                if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
+                if (1 != EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                     ERR_print_errors_fp(stdout);
-                };
-                if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
+                }
+                if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) {
                     ERR_print_errors_fp(stdout);
+                }
             }
 
             //no padding in this block
-            if (desc->get_padding() == true)
+            if (desc->get_padding() == true) {
                 throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks\n");
+            }
 
             d_iv_tagkey = pmt::mp("iv");
         }
@@ -95,30 +97,26 @@ namespace gr {
             if (v.size()) {
                 pmt::pmt_t p = v.front().value;
                 if (pmt::is_u8vector(p)) {
-                    //pmt::pmt_u8vector_elements(p);<---kaputt?
-                    //set new iv
-                    size_t t = d_ciph->iv_len;
-                    const unsigned char *u8tmp = u8vector_elements(p, t);
-                    d_iv.assign(u8tmp, u8tmp + d_ciph->iv_len);
-
+                    d_iv = u8vector_elements(p);
                     d_have_iv = true;
                     //initialize decryption for new iv
-                    if (!EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
+                    if (1 != EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                         ERR_print_errors_fp(stdout);
-
-                    if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0))
+                    }
+                    if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) {
                         ERR_print_errors_fp(stdout);
+                    }
                 }
             }
             //error if decryption needs iv
-            if (!d_have_iv)
+            if (!d_have_iv) {
                 throw std::runtime_error("ERROR decryption without iv\n");
-
+            }
             //decrypt
             int nout = 0;
-            if (!EVP_DecryptUpdate(d_ciph_ctx, out, &nout, in, ninput_items[0]))
+            if (1 != EVP_DecryptUpdate(d_ciph_ctx, out, &nout, in, ninput_items[0])) {
                 ERR_print_errors_fp(stdout);
-
+            }
 
             //printf("nin: %i, nout: %i, noutput_work: %i\n", ninput_items[0], nout, noutput_items);
 

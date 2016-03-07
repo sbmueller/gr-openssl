@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2016 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2016 Kristian Maier.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,13 +57,15 @@ namespace gr {
             d_padding = desc->get_padding();
 
             //random iv
-            RAND_bytes(&d_iv[0], d_ciph->iv_len);
-
+            if (1 != RAND_bytes(&d_iv[0], d_ciph->iv_len)) {
+                ERR_print_errors_fp(stdout);
+            }
             //initialize encryption
             d_ciph_ctx = EVP_CIPHER_CTX_new();
-            if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
+            if (1 != EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                 ERR_print_errors_fp(stdout);
-            if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
+            }
+            if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
                 ERR_print_errors_fp(stdout);
 
         }
@@ -97,21 +99,26 @@ namespace gr {
                 //encrypt and send remaining data if any
                 int nout = 0;
                 d_out_buffer.reserve(d_ciph->block_size);
-                if (!EVP_EncryptFinal_ex(d_ciph_ctx, &d_out_buffer[0], &nout))
+                if (1 != EVP_EncryptFinal_ex(d_ciph_ctx, &d_out_buffer[0], &nout)) {
                     ERR_print_errors_fp(stdout);
+                }
                 //publish
                 if (nout != 0)
                     message_port_pub(pmt::mp("pdus"), pmt::cons(meta, pmt::init_u8vector(nout, d_out_buffer)));
 
                 //generate random iv and set it in meta
-                RAND_bytes(&d_iv[0], d_ciph->iv_len);
+                if (1 != RAND_bytes(&d_iv[0], d_ciph->iv_len)){
+                    ERR_print_errors_fp(stdout);
+                }
                 meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
 
                 //initialize encryption with new iv
-                if (!EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0]))
+                if (1 != EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                     ERR_print_errors_fp(stdout);
-                if (!EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding))
+                }
+                if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding)) {
                     ERR_print_errors_fp(stdout);
+                }
             }
 
             //data to encrypt
@@ -123,8 +130,9 @@ namespace gr {
 
                 //encrypt
                 int nout = 0;
-                if (!EVP_EncryptUpdate(d_ciph_ctx, &d_out_buffer[0], &nout, in, inlen))
+                if (1 != EVP_EncryptUpdate(d_ciph_ctx, &d_out_buffer[0], &nout, in, inlen)) {
                     ERR_print_errors_fp(stdout);
+                }
 
                 data = pmt::init_u8vector(nout, d_out_buffer);
             } else {
