@@ -79,7 +79,7 @@ target_link_libraries(
   ${GNURADIO_RUNTIME_LIBRARIES}
   ${Boost_LIBRARIES}
   ${CPPUNIT_LIBRARIES}
-  ${OPENSSL_LIBRARIES}
+  #${OPENSSL_LIBRARIES}
   gnuradio-crypto
 )
 

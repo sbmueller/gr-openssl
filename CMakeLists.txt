@@ -126,7 +126,7 @@ else(DOXYGEN_FOUND)
 	option(ENABLE_DOXYGEN "Build docs using Doxygen" OFF)
 endif(DOXYGEN_FOUND)
 
-find_package(OpenSSL REQUIRED)
+#find_package(OpenSSL REQUIRED)
 
 ########################################################################
 # Setup the include and linker paths
@@ -139,7 +139,7 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${CPPUNIT_INCLUDE_DIRS}
     ${GNURADIO_ALL_INCLUDE_DIRS}
-    ${OPENSSL_OPENSSL_INCLUDE_DIR}
+    #${OPENSSL_OPENSSL_INCLUDE_DIR}
 )
 
 link_directories(
