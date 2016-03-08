@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<block>
+  <name>hash</name>
+  <key>crypto_hash</key>
+  <category>crypto</category>
+  <import>import crypto</import>
+  <make>crypto.hash($hash_name)</make>
+
+  <param>
+    <name>Hash</name>
+    <key>hash_name</key>
+    <type>enum</type>
+    <option><name>md4</name><key>"md4"</key></option>
+    <option><name>md5</name><key>"md5"</key></option>
+    <option><name>ripemd160</name><key>"ripemd160"</key></option>
+    <option><name>sha</name><key>"sha"</key></option>
+    <option><name>sha1</name><key>"sha1"</key></option>
+    <option><name>sha224</name><key>"sha224"</key></option>
+    <option><name>sha256</name><key>"sha256"</key></option>
+    <option><name>sha384</name><key>"sha384"</key></option>
+    <option><name>sha512</name><key>"sha512"</key></option>
+    <option><name>whirlpool</name><key>"whirlpool"</key></option>
+  </param>
+
+  <sink>
+    <name>pdus</name>
+    <type>message</type>
+    <optional>1</optional>
+  </sink>
+
+  <source>
+    <name>pdus</name>
+    <type>message</type>
+    <optional>1</optional>
+  </source>
+</block>

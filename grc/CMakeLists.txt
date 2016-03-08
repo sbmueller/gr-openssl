@@ -21,5 +21,6 @@ install(FILES
     crypto_sym_enc_tagged_bb.xml
     crypto_sym_dec_tagged_bb.xml
     crypto_sym_enc.xml
-    crypto_sym_dec.xml DESTINATION share/gnuradio/grc/blocks
+    crypto_sym_dec.xml
+    crypto_hash.xml DESTINATION share/gnuradio/grc/blocks
 )

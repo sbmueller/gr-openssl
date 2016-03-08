@@ -5,12 +5,6 @@
   <category>crypto</category>
   <import>import crypto</import>
   <make>crypto.sym_enc_tagged_bb(self.$(cipher()), $key_len)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type
-       -->
 
   <param>
     <name>cipher definition</name>
@@ -24,21 +18,11 @@
     <type>string</type>
   </param>
 
-  <!-- Make one 'sink' node per input. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
   <sink>
     <name>in</name>
     <type>byte</type>
   </sink>
 
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
   <source>
     <name>out</name>
     <type>byte</type>

@@ -53,13 +53,13 @@ namespace gr {
 
             bool get_padding() { return d_padding; };
 
-            std::vector<unsigned char> get_key() { return d_key; }
+            std::vector<unsigned char> get_key() { return d_key; };
 
         private:
             const EVP_CIPHER *d_evp_ciph;
             bool d_padding;
             std::vector<unsigned char> d_key;
-            static int cnt_ciph;
+
         };
 
 
