@@ -55,6 +55,8 @@ namespace gr {
 
             d_iv_tagkey = pmt::mp("iv");
             d_final_tagkey = pmt::mp("final");
+
+            set_tag_propagation_policy(TPP_DONT);
         }
 
 
@@ -108,6 +110,14 @@ namespace gr {
                 ERR_print_errors_fp(stdout);
             }
 
+            //transmit iv on first sample
+            if (d_ctr==0) {
+                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
+                add_item_tag(0, nitems_read(0), d_iv_tagkey, iv_pmt);
+            }
+
+            d_ctr++;
+
             //new IV should be generated
             if (t_final.size()) {
                 int tmp=0;
@@ -118,15 +128,11 @@ namespace gr {
 
                 init_ctx();
                 d_ctr=0;
+
+                //add final tag again to output
+                add_item_tag(0, nitems_read(0), d_final_tagkey, pmt::PMT_NIL);
             }
 
-            //transmit iv on first sample
-            if (d_ctr==0) {
-                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
-                add_item_tag(0, nitems_read(0), d_iv_tagkey, iv_pmt);
-            }
-
-            d_ctr++;
             return nout;
         }
 

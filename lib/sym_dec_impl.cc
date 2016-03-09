@@ -100,7 +100,7 @@ namespace gr {
                 if(d_have_iv){
                     d_out_buffer.reserve(d_ciph->block_size);
                     int nout=0;
-                    if (1 != EVP_DecryptFinal_ex(d_ciph_ctx, &d_out_buffer[nout], &nout)) {
+                    if (1 != EVP_DecryptFinal_ex(d_ciph_ctx, &d_out_buffer[0], &nout)) {
                         ERR_print_errors_fp(stdout);
                     }
                     if(nout){

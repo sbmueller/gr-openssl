@@ -120,7 +120,7 @@
     </param>
     <param>
       <key>affinity</key>
-      <value></value>
+      <value>0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -151,7 +151,7 @@
     </param>
     <param>
       <key>affinity</key>
-      <value></value>
+      <value>0</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -182,7 +182,7 @@
     </param>
     <param>
       <key>affinity</key>
-      <value></value>
+      <value>0</value>
     </param>
     <param>
       <key>_enabled</key>

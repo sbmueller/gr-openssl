@@ -100,12 +100,19 @@ namespace gr {
                 throw std::runtime_error("sym_enc received non PDU input");
             }
 
+            //add start iv to first packet
+            if (d_pdu_ctr == 0) {
+                meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
+            }
+
+            d_pdu_ctr++;
+
             //data to encrypt
             if (pmt::is_u8vector(data) && pmt::length(data) != 0) {
 
                 size_t inlen = pmt::length(data);
                 const unsigned char *in = u8vector_elements(data, inlen);
-                d_out_buffer.reserve(inlen + 3 * d_ciph->block_size);
+                d_out_buffer.reserve(inlen + 2 * d_ciph->block_size);
 
                 //encrypt and finalize if final flag detected
                 int nout = 0;
@@ -129,13 +136,7 @@ namespace gr {
                 throw std::runtime_error("sym_enc pdu data field not byte vector with data");
             }
 
-            //add start iv to first packet
-            if (d_pdu_ctr == 0) {
-                meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
-            }
-
             message_port_pub(pmt::mp("pdus"), pmt::cons(meta, data));
-            d_pdu_ctr++;
 
         }
 
