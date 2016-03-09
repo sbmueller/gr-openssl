@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<block>
+  <name>auth_enc_aes_gcm</name>
+  <key>crypto_auth_enc_aes_gcm</key>
+  <category>crypto</category>
+  <import>import crypto</import>
+  <make>crypto.auth_enc_aes_gcm($key, $keylen, $ivlen)</make>
+
+  <param>
+    <name>key</name>
+    <key>key</key>
+    <type>int_vector</type>
+  </param>
+
+  <param>
+    <name>key length</name>
+    <key>keylen</key>
+    <type>enum</type>
+    <option><name>256 bit</name><key>32</key></option>
+    <option><name>192 bit</name><key>24</key></option>
+    <option><name>128 bit</name><key>16</key></option>
+  </param>
+
+  <param>
+    <name>iv length</name>
+    <key>ivlen</key>
+    <type>int</type>
+    <value>12</value>
+  </param>
+
+  <sink>
+    <name>pdus_data</name>
+    <type>message</type>
+  </sink>
+
+  <source>
+    <name>pdus</name>
+    <type>message</type>
+  </source>
+</block>

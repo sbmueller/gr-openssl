@@ -22,7 +22,7 @@ For correct decryption its necessary to have the correct initialization vector(I
 encryption blocks randomly generates these IVs and outputs them coupled with the first encrypted data. The 
 message blocks therefore puts the IV in the metadata field of the first generated PDU, the tagged stream block as
 a tag on the first output sample.  
-The encryption can be reseted by inserting an "iv" key in the metadata field of
+The encryption can be reseted by inserting an "final" pmt in the metadata field of
  the PDU, respectively as a tag on a sample within a tagged stream packet. Then a new IV is generated.
     
 ###Hash Functions / Message Digests

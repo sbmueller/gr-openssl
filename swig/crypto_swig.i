@@ -15,6 +15,7 @@
 #include "crypto/sym_enc.h"
 #include "crypto/sym_dec.h"
 #include "crypto/hash.h"
+#include "crypto/auth_enc_aes_gcm.h"
 %}
 
 %include "crypto/key.h"
@@ -29,3 +30,5 @@ GR_SWIG_BLOCK_MAGIC2(crypto, sym_enc);
 GR_SWIG_BLOCK_MAGIC2(crypto, sym_dec);
 %include "crypto/hash.h"
 GR_SWIG_BLOCK_MAGIC2(crypto, hash);
+%include "crypto/auth_enc_aes_gcm.h"
+GR_SWIG_BLOCK_MAGIC2(crypto, auth_enc_aes_gcm);
