@@ -23,13 +23,13 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-#include <crypto/generate_key.h>
+#include <crypto/key.h>
 
 namespace gr {
     namespace crypto {
 
         std::vector<uint8_t>
-        generate_key::make_pass_key(int keylen, const std::string &password)
+        key::make_pass_key(int keylen, const std::string &password)
         {
             std::vector<uint8_t> key(keylen, 0);
             if (!PKCS5_PBKDF2_HMAC(password.c_str(), -1, NULL, 0, 20000, EVP_sha256(), keylen, &key[0])) {
@@ -39,7 +39,7 @@ namespace gr {
         }
 
         std::vector<uint8_t>
-        generate_key::make_pass_key(int keylen, const std::string &password,
+        key::make_pass_key(int keylen, const std::string &password,
                                     const unsigned char *salt, int saltlen, int hashrounds)
         {
             std::vector<uint8_t> key(keylen, 0);
@@ -50,17 +50,13 @@ namespace gr {
         }
 
         std::vector<uint8_t>
-        generate_key::make_rand_key(int keylen)
+        key::make_rand_key(int keylen)
         {
             std::vector<uint8_t> key(keylen, 0);
             RAND_bytes(&key[0], keylen);
             return key;
         }
 
-
-        generate_key::~generate_key()
-        {
-        }
 
     } /* namespace crypto */
 } /* namespace gr */

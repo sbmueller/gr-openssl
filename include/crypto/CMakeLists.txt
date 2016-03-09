@@ -22,11 +22,11 @@
 ########################################################################
 install(FILES
     api.h
-    generate_key.h
     sym_enc_tagged_bb.h
     sym_dec_tagged_bb.h
     sym_ciph_desc.h
     sym_enc.h
     sym_dec.h
-    hash.h DESTINATION include/crypto
+    hash.h
+    key.h DESTINATION include/crypto
 )

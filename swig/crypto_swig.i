@@ -9,7 +9,7 @@
 
 %{
 #include "crypto/sym_enc_tagged_bb.h"
-#include "crypto/generate_key.h"
+#include "crypto/key.h"
 #include "crypto/sym_ciph_desc.h"
 #include "crypto/sym_dec_tagged_bb.h"
 #include "crypto/sym_enc.h"
@@ -17,7 +17,7 @@
 #include "crypto/hash.h"
 %}
 
-%include "crypto/generate_key.h"
+%include "crypto/key.h"
 %include "crypto/sym_ciph_desc.h"
 %include "crypto/sym_enc_tagged_bb.h"
 GR_SWIG_BLOCK_MAGIC2(crypto, sym_enc_tagged_bb);

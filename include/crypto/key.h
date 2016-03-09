@@ -39,15 +39,13 @@ namespace gr {
          *
          *
          */
-        class CRYPTO_API generate_key
+        class CRYPTO_API key
         {
         public:
             static std::vector<uint8_t> make_pass_key(int keylen, const std::string &password,
                                                       const unsigned char *salt, int saltlen, int hashrounds);
             static std::vector<uint8_t> make_pass_key(int keylen, const std::string &password);
             static std::vector<uint8_t> make_rand_key(int keylen);
-
-            ~generate_key();
 
         private:
 

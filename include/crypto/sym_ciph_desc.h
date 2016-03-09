@@ -23,7 +23,6 @@
 #define INCLUDED_CRYPTO_SYM_CIPH_DESC_H
 
 #include <crypto/api.h>
-#include <crypto/generate_key.h>
 #include <stdexcept>
 #include <stdint.h>
 #include <openssl/evp.h>
@@ -37,6 +36,7 @@ namespace gr {
 
         /*!
          * \brief defines a symmetric block/stream cipher
+         *
          *
          *
          */

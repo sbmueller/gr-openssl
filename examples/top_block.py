@@ -3,7 +3,7 @@
 ##################################################
 # GNU Radio Python Flow Graph
 # Title: Top Block
-# Generated: Tue Mar  8 04:31:55 2016
+# Generated: Tue Mar  8 19:28:31 2016
 ##################################################
 
 if __name__ == '__main__':
@@ -60,7 +60,7 @@ class top_block(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 100000
-        self.key = key = crypto.generate_key.make_rand_key(32)
+        self.key = key = crypto.key.make_rand_key(32)
 
         ##################################################
         # Blocks
@@ -134,6 +134,7 @@ class top_block(gr.top_block, Qt.QWidget):
 
     def set_key(self, key):
         self.key = key
+        self.set_key(crypto.self.key.make_rand_key(32))
 
 
 def main(top_block_cls=top_block, options=None):

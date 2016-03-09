@@ -36,6 +36,7 @@ class qa_hash (gr_unittest.TestCase):
         hash_func = "md5"
         text = bytearray("ABCDEFGH")
         exp_result = bytearray(["\x47","\x83","\xe7","\x84","\xb4","\xfa","\x2f","\xba","\x9e","\x4d","\x65","\x02","\xdb","\xc6","\x4f","\x8f"])
+
         src = blocks.vector_source_b(text)
         stts = blocks.stream_to_tagged_stream(1, 1, 8, "packet_len")
         tstpdu = blocks.tagged_stream_to_pdu(blocks.byte_t, "packet_len")

@@ -1,7 +1,7 @@
 title: The CRYPTO OOT Module
 brief: Short description of gr-crypto
 tags: # Tags are arbitrary, but look at CGRAN what other authors are using
-  - sdr
+  - sdr, crypto, encryption, decryption
 author:
   - Author Name <kristian.maier@gmx.de>
 copyright_owner:
