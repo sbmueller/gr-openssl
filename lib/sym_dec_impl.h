@@ -40,6 +40,9 @@ namespace gr {
             std::vector<unsigned char> d_out_buffer;
 
             pmt::pmt_t d_iv_id;
+            pmt::pmt_t d_final_id;
+
+            void init_ctx();
 
         public:
             sym_dec_impl(sym_ciph_desc &ciph_desc);

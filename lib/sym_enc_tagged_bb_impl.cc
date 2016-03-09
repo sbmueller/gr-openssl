@@ -47,32 +47,35 @@ namespace gr {
             d_ciph = desc->get_evp_ciph();
             d_iv.assign(d_ciph->iv_len, 0);
             d_key = desc->get_key();
+            d_padding = desc->get_padding();
+            d_ctr=0;
 
+            d_ciph_ctx = EVP_CIPHER_CTX_new();
+            init_ctx();
+
+            d_iv_tagkey = pmt::mp("iv");
+            d_final_tagkey = pmt::mp("final");
+        }
+
+
+        //new random iv and ctx init
+        void
+        sym_enc_tagged_bb_impl::init_ctx()
+        {
             //random iv
             if (1 != RAND_bytes(&d_iv[0], d_ciph->iv_len)) {
                 ERR_print_errors_fp(stdout);
             }
-
             //initialize encryption
-            d_ciph_ctx = EVP_CIPHER_CTX_new();
             if (1 != EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
                 ERR_print_errors_fp(stdout);
             }
-            if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) {
+            if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding)) {
                 ERR_print_errors_fp(stdout);
             }
-
-            //no padding in this block
-            if (desc->get_padding()) {
-                throw std::runtime_error("no padding allowed in tagged stream encryption, use message blocks\n");
-            }
-            d_iv_tagkey = pmt::mp("iv");
         }
 
 
-        /*
-         * Our virtual destructor.
-         */
         sym_enc_tagged_bb_impl::~sym_enc_tagged_bb_impl()
         {
             d_key.assign(d_ciph->key_len, 0);
@@ -94,33 +97,10 @@ namespace gr {
             const unsigned char *in = (const unsigned char *) input_items[0];
             unsigned char *out = (unsigned char *) output_items[0];
 
-            std::vector<gr::tag_t> v;
-            get_tags_in_window(v, 0, 0, ninput_items[0], d_iv_tagkey);
+            std::vector<gr::tag_t> t_iv, t_final;
+            get_tags_in_window(t_iv, 0, 0, ninput_items[0], d_iv_tagkey);
+            get_tags_in_window(t_final, 0, 0, ninput_items[0], d_final_tagkey);
 
-            //new IV should be generated
-            if (v.size()) {
-                if (1 != RAND_bytes(&d_iv[0], d_ciph->iv_len)) {
-                    ERR_print_errors_fp(stdout);
-                }
-
-                //initialize encryption with new iv
-                if (1 != EVP_EncryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
-                    ERR_print_errors_fp(stdout);
-                }
-                if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, 0)) {
-                    ERR_print_errors_fp(stdout);
-                }
-
-                //send new iv
-                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
-                add_item_tag(0, nitems_read(0), d_iv_tagkey, iv_pmt);
-            }
-
-            //transmit iv on first sample
-            if (nitems_read(0) == 0) {
-                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
-                add_item_tag(0, 0, d_iv_tagkey, iv_pmt);
-            }
 
             //encrypt
             int nout = 0;
@@ -128,6 +108,25 @@ namespace gr {
                 ERR_print_errors_fp(stdout);
             }
 
+            //new IV should be generated
+            if (t_final.size()) {
+                int tmp=0;
+                if (1 != EVP_EncryptFinal_ex(d_ciph_ctx, out+nout, &tmp)) {
+                    ERR_print_errors_fp(stdout);
+                }
+                nout=nout+tmp;
+
+                init_ctx();
+                d_ctr=0;
+            }
+
+            //transmit iv on first sample
+            if (d_ctr==0) {
+                pmt::pmt_t iv_pmt = pmt::init_u8vector(d_ciph->iv_len, d_iv);
+                add_item_tag(0, nitems_read(0), d_iv_tagkey, iv_pmt);
+            }
+
+            d_ctr++;
             return nout;
         }
 

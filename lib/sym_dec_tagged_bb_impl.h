@@ -33,12 +33,18 @@ namespace gr {
      private:
         const EVP_CIPHER *d_ciph;
         EVP_CIPHER_CTX *d_ciph_ctx;
+        bool d_padding;
 
         std::vector<uint8_t> d_key;
         std::vector<uint8_t> d_iv;
 
         pmt::pmt_t d_iv_tagkey;
+        pmt::pmt_t d_final_tagkey;
+
         bool d_have_iv;
+
+        void init_ctx();
+
 
      protected:
       int calculate_output_stream_length(const gr_vector_int &ninput_items);

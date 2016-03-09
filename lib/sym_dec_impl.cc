@@ -44,6 +44,7 @@ namespace gr {
                             gr::io_signature::make(0, 0, 0))
         {
             d_iv_id = pmt::mp("iv");
+            d_final_id = pmt::mp("final");
 
             message_port_register_out(pmt::mp("pdus"));
             message_port_register_in(pmt::mp("pdus"));
@@ -57,15 +58,21 @@ namespace gr {
 
             d_ciph_ctx = EVP_CIPHER_CTX_new();
 
-            //initialize decryption
+            //initialize decryption if no need for iv
             d_have_iv = false || (d_ciph->iv_len == 0);
             if (d_have_iv) {
-                if (1 != EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
-                    ERR_print_errors_fp(stdout);
-                }
-                if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding)) {
-                    ERR_print_errors_fp(stdout);
-                }
+                init_ctx();
+            }
+        }
+
+
+        void
+        sym_dec_impl::init_ctx(){
+            if (1 != EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
+                ERR_print_errors_fp(stdout);
+            }
+            if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding)) {
+                ERR_print_errors_fp(stdout);
             }
         }
 
@@ -89,16 +96,16 @@ namespace gr {
             pmt::pmt_t iv_val = pmt::dict_ref(meta, d_iv_id, pmt::PMT_NIL);
             if (pmt::is_u8vector(iv_val) && pmt::length(iv_val) == d_ciph->iv_len) {
 
-                if (d_have_iv) {
-                    //decrypt final part
-                    int nout = 0;
+                //final flag was not set before new iv -> output remaining bytes in extra msg, maybe unwanted?
+                if(d_have_iv){
                     d_out_buffer.reserve(d_ciph->block_size);
-                    if (1 != EVP_DecryptFinal_ex(d_ciph_ctx, &d_out_buffer[0], &nout)) {
+                    int nout=0;
+                    if (1 != EVP_DecryptFinal_ex(d_ciph_ctx, &d_out_buffer[nout], &nout)) {
                         ERR_print_errors_fp(stdout);
                     }
-                    //publish
-                    if (nout != 0)
-                        message_port_pub(pmt::mp("pdus"), pmt::cons(meta, pmt::init_u8vector(nout, d_out_buffer)));
+                    if(nout){
+                        message_port_pub(pmt::mp("pdus"), pmt::cons(pmt::make_dict(), pmt::init_u8vector(nout, d_out_buffer)));
+                    }
                 }
 
                 d_iv = u8vector_elements(iv_val);
@@ -107,19 +114,14 @@ namespace gr {
                 //remove iv from metadata
                 meta = pmt::dict_delete(meta, d_iv_id);
 
-                //initialize encryption with new iv
-                if (1 != EVP_DecryptInit_ex(d_ciph_ctx, d_ciph, NULL, &d_key[0], &d_iv[0])) {
-                    ERR_print_errors_fp(stdout);
-                }
-                if (1 != EVP_CIPHER_CTX_set_padding(d_ciph_ctx, d_padding)) {
-                    ERR_print_errors_fp(stdout);
-                }
+                //init dec with new iv
+                init_ctx();
             }
 
-            if (pmt::is_u8vector(data)) {
+            if (pmt::is_u8vector(data) && pmt::length(data) != 0) {
                 size_t inlen = pmt::length(data);
                 const unsigned char *in = u8vector_elements(data, inlen);
-                d_out_buffer.reserve(inlen + d_ciph->block_size);
+                d_out_buffer.reserve(inlen + 2*d_ciph->block_size);
 
                 if (!d_have_iv) {
                     throw std::runtime_error("ERROR decryption without iv\n");
@@ -127,11 +129,24 @@ namespace gr {
 
                 //decrypt
                 int nout = 0;
-                if (1 != EVP_DecryptUpdate(d_ciph_ctx, &d_out_buffer[0], &nout, in, inlen)) {
+                int tmp = 0;
+                if (1 != EVP_DecryptUpdate(d_ciph_ctx, &d_out_buffer[0], &tmp, in, inlen)) {
                     ERR_print_errors_fp(stdout);
+                }
+                nout=tmp;
+
+                if(pmt::dict_has_key(meta, d_final_id)){
+                    if (1 != EVP_DecryptFinal_ex(d_ciph_ctx, &d_out_buffer[nout], &tmp)) {
+                        ERR_print_errors_fp(stdout);
+                    }
+                    nout+=tmp;
+                    //need iv in next msg
+                    d_have_iv = false || (d_ciph->iv_len == 0);
                 }
 
                 data = pmt::init_u8vector(nout, d_out_buffer);
+            }else {
+                throw std::runtime_error("sym_dec pdu data field not byte vector with data");
             }
 
             //publish
