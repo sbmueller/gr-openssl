@@ -105,6 +105,12 @@ endif(APPLE)
 ########################################################################
 find_package(CppUnit)
 find_package(Doxygen)
+find_package(OpenSSL REQUIRED)
+
+if(NOT OPENSSL_FOUND)
+    message(FATAL_ERROR "OpenSSL required to compile crypto")
+endif()
+
 
 # Search for GNU Radio and its components and versions. Add any
 # components required to the list of GR_REQUIRED_COMPONENTS (in all
@@ -139,7 +145,6 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${CPPUNIT_INCLUDE_DIRS}
     ${GNURADIO_ALL_INCLUDE_DIRS}
-    #${OPENSSL_OPENSSL_INCLUDE_DIR}
 )
 
 link_directories(

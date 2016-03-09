@@ -100,13 +100,6 @@ namespace gr {
                 throw std::runtime_error("sym_enc received non PDU input");
             }
 
-            //add start iv to first packet
-            if (d_pdu_ctr == 0) {
-                meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
-            }
-
-            d_pdu_ctr++;
-
             //data to encrypt
             if (pmt::is_u8vector(data) && pmt::length(data) != 0) {
 
@@ -121,6 +114,13 @@ namespace gr {
                     ERR_print_errors_fp(stdout);
                 }
                 nout +=tmp;
+
+                //add start iv to first packet
+                if (d_pdu_ctr == 0) {
+                    meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ciph->iv_len, &d_iv[0]));
+                }
+
+                d_pdu_ctr++;
 
                 if(pmt::dict_has_key(meta, d_final_id)){
                     if (1 != EVP_EncryptFinal_ex(d_ciph_ctx, &d_out_buffer[nout], &tmp)) {

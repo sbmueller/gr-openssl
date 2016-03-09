@@ -114,14 +114,18 @@ namespace gr {
                 }
 
                 data = pmt::init_u8vector(nout, d_out_buffer);
+
+                //add iv to first packet
+                if (d_pdu_ctr == 0) {
+                    meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ivlen, &d_iv[0]));
+                }
+
+                d_pdu_ctr++;
+
             } else {
                 throw std::runtime_error("auth_enc_aes_gcm pdu data field not byte vector with data");
             }
 
-            //add iv to first packet
-            if (d_pdu_ctr == 0) {
-                meta = pmt::dict_add(meta, d_iv_id, pmt::init_u8vector(d_ivlen, &d_iv[0]));
-            }
 
             //add aad data for signing
             if (pmt::dict_has_key(meta, d_aad_id)) {
@@ -166,7 +170,7 @@ namespace gr {
 
             //publish
             message_port_pub(pmt::mp("pdus"), pmt::cons(meta, data));
-            d_pdu_ctr++;
+
 
         }
 
