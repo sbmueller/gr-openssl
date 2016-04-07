@@ -2,7 +2,7 @@
 <block>
   <name>auth_enc_aes_gcm</name>
   <key>crypto_auth_enc_aes_gcm</key>
-  <category>crypto</category>
+  <category>OpenSSL</category>
   <import>import crypto</import>
   <make>crypto.auth_enc_aes_gcm($key, $keylen, $ivlen)</make>
 

@@ -2,7 +2,7 @@
 <block>
   <name>hash</name>
   <key>crypto_hash</key>
-  <category>crypto</category>
+  <category>OpenSSL</category>
   <import>import crypto</import>
   <make>crypto.hash($hash_name)</make>
 

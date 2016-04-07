@@ -2,7 +2,7 @@
 <block>
   <name>Symmetric Decryption</name>
   <key>crypto_sym_dec</key>
-  <category>crypto</category>
+  <category>OpenSSL</category>
   <import>import crypto</import>
   <make>crypto.sym_dec(self.$ciph_desc())</make>
 

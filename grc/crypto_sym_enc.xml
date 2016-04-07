@@ -2,7 +2,7 @@
 <block>
   <name>Symmetric Encryption</name>
   <key>crypto_sym_enc</key>
-  <category>crypto</category>
+  <category>OpenSSL</category>
   <import>import crypto</import>
   <make>crypto.sym_enc(self.$cipher())</make>
 

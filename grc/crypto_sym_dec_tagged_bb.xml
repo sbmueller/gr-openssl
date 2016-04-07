@@ -2,7 +2,7 @@
 <block>
   <name>Symmetric Decryption Tagged Stream</name>
   <key>crypto_sym_dec_tagged_bb</key>
-  <category>crypto</category>
+  <category>OpenSSL</category>
   <import>import crypto</import>
   <make>crypto.sym_dec_tagged_bb(self.$(cipher()), $packet_key_len)</make>
 
