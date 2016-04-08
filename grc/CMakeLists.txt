@@ -23,5 +23,6 @@ install(FILES
     crypto_sym_enc.xml
     crypto_sym_dec.xml
     crypto_hash.xml
-    crypto_auth_enc_aes_gcm.xml DESTINATION share/gnuradio/grc/blocks
+    crypto_auth_enc_aes_gcm.xml 
+    crypto_auth_dec_aes_gcm.xml DESTINATION share/gnuradio/grc/blocks
 )
