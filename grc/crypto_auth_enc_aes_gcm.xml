@@ -24,8 +24,8 @@
   <param>
     <name>iv length</name>
     <key>ivlen</key>
-    <type>int</type>
     <value>12</value>
+    <type>int</type>
   </param>
 
   <sink>

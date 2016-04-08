@@ -1,7 +1,7 @@
-gr-crypto
+gr-openssl
 =========================
 
-gr-crypto is a gnuradio oot-package providing encryption routines using the OpenSSL crypto library
+gr-openssl is a gnuradio oot-package providing encryption routines using the OpenSSL crypto library
 
 
 Implemented Functionality
@@ -19,7 +19,7 @@ For more background info, see wikipedia.
     
 The implementation operates with byte PDU (packet data unit) messages or tagged stream blocks from GNU Radio.
 For correct decryption its necessary to have the correct initialization vector(IV) at receiver side. The 
-encryption blocks randomly generates these IVs and outputs them coupled with the first encrypted data. The 
+encryption blocks generates these (random) IVs and outputs them coupled with the first encrypted data. The 
 message blocks therefore puts the IV in the metadata field of the first generated PDU, the tagged stream block as
 a tag on the first output sample.  
 The encryption can be reseted by inserting an "final" pmt in the metadata field of

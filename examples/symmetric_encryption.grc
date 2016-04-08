@@ -237,12 +237,12 @@
       <value>crypto_sym_ciph_desc_0</value>
     </param>
     <param>
-      <key>keyfile</key>
-      <value>mykey.key</value>
-    </param>
-    <param>
       <key>padding</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>key</key>
+      <value></value>
     </param>
   </block>
   <block>
@@ -335,24 +335,18 @@
     <source_block_id>blocks_message_strobe_0_0</source_block_id>
     <sink_block_id>crypto_sym_enc_0</sink_block_id>
     <source_key>strobe</source_key>
-    <sink_key>plain</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_message_strobe_0_1</source_block_id>
-    <sink_block_id>crypto_sym_enc_0</sink_block_id>
-    <source_key>strobe</source_key>
-    <sink_key>plain</sink_key>
+    <sink_key>pdus</sink_key>
   </connection>
   <connection>
     <source_block_id>crypto_sym_dec_0</source_block_id>
     <sink_block_id>blocks_message_debug_0</sink_block_id>
-    <source_key>decrypted</source_key>
+    <source_key>pdus</source_key>
     <sink_key>print</sink_key>
   </connection>
   <connection>
     <source_block_id>crypto_sym_enc_0</source_block_id>
     <sink_block_id>crypto_sym_dec_0</sink_block_id>
-    <source_key>encrypted</source_key>
-    <sink_key>encrypted</sink_key>
+    <source_key>pdus</source_key>
+    <sink_key>pdus</sink_key>
   </connection>
 </flow_graph>
