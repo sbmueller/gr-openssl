@@ -2,7 +2,7 @@
 <block>
   <name>Authenticated AES-GCM Decryption</name>
   <key>crypto_auth_dec_aes_gcm</key>
-  <category>crypto</category>
+  <category>OpenSSL</category>
   <import>import crypto</import>
   <make>crypto.auth_dec_aes_gcm($key, $keylen, $ivlen)</make>
 
