@@ -18,10 +18,10 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef INCLUDED_CRYPTO_AUTH_ENC_AES_GCM_IMPL_H
-#define INCLUDED_CRYPTO_AUTH_ENC_AES_GCM_IMPL_H
+#ifndef INCLUDED_CRYPTO_AUTH_DEC_AES_GCM_IMPL_H
+#define INCLUDED_CRYPTO_AUTH_DEC_AES_GCM_IMPL_H
 
-#include <crypto/auth_enc_aes_gcm.h>
+#include <crypto/auth_dec_aes_gcm.h>
 #include <stdexcept>
 #include <stdint.h>
 #include <openssl/evp.h>
@@ -30,38 +30,41 @@
 #include <openssl/rand.h>
 
 namespace gr {
-    namespace crypto {
+  namespace crypto {
 
-        class auth_enc_aes_gcm_impl : public auth_enc_aes_gcm
-        {
-        private:
-            const EVP_CIPHER *d_ciph;
-            EVP_CIPHER_CTX *d_ciph_ctx;
-            unsigned long d_pdu_ctr;
+    class auth_dec_aes_gcm_impl : public auth_dec_aes_gcm
+    {
+     private:
+        const EVP_CIPHER *d_ciph;
+        EVP_CIPHER_CTX *d_ciph_ctx;
+        unsigned long d_pdu_ctr;
 
-            std::vector<uint8_t> d_key;
-            std::vector<uint8_t> d_iv;
-            int d_ivlen;
+        std::vector<uint8_t> d_key;
+        std::vector<uint8_t> d_iv;
+        int d_ivlen;
+        bool d_have_iv;
 
-            std::vector<uint8_t> d_out_buffer;
+        std::vector<uint8_t> d_out_buffer;
 
-            pmt::pmt_t d_final_id;
-            pmt::pmt_t d_iv_id;
-            pmt::pmt_t d_auth_tag_id;
-            pmt::pmt_t d_aad_id;
+        pmt::pmt_t d_final_id;
+        pmt::pmt_t d_iv_id;
+        pmt::pmt_t d_auth_tag_id;
+        pmt::pmt_t d_aad_id;
 
-            void init_ctx();
+        void init_ctx();
 
-        public:
-            auth_enc_aes_gcm_impl(std::vector<uint8_t> key, int keylen, int ivlen);
-            ~auth_enc_aes_gcm_impl();
 
-            void msg_handler(pmt::pmt_t msg);
+     public:
+      auth_dec_aes_gcm_impl(std::vector<uint8_t> key, int keylen, int ivlen);
+      ~auth_dec_aes_gcm_impl();
 
-        };
 
-    } // namespace crypto
+        void msg_handler(pmt::pmt_t msg);
+
+    };
+
+  } // namespace crypto
 } // namespace gr
 
-#endif /* INCLUDED_CRYPTO_AUTH_ENC_AES_GCM_IMPL_H */
+#endif /* INCLUDED_CRYPTO_AUTH_DEC_AES_GCM_IMPL_H */
 

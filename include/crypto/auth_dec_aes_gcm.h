@@ -19,8 +19,8 @@
  */
 
 
-#ifndef INCLUDED_CRYPTO_AUTH_ENC_AES_GCM_H
-#define INCLUDED_CRYPTO_AUTH_ENC_AES_GCM_H
+#ifndef INCLUDED_CRYPTO_AUTH_DEC_AES_GCM_H
+#define INCLUDED_CRYPTO_AUTH_DEC_AES_GCM_H
 
 #include <crypto/api.h>
 #include <gnuradio/block.h>
@@ -33,17 +33,17 @@ namespace gr {
      * \ingroup crypto
      *
      */
-    class CRYPTO_API auth_enc_aes_gcm : virtual public gr::block
+    class CRYPTO_API auth_dec_aes_gcm : virtual public gr::block
     {
      public:
-      typedef boost::shared_ptr<auth_enc_aes_gcm> sptr;
+      typedef boost::shared_ptr<auth_dec_aes_gcm> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of crypto::auth_enc_aes_gcm.
+       * \brief Return a shared_ptr to a new instance of crypto::auth_dec_aes_gcm.
        *
-       * To avoid accidental use of raw pointers, crypto::auth_enc_aes_gcm's
+       * To avoid accidental use of raw pointers, crypto::auth_dec_aes_gcm's
        * constructor is in a private implementation
-       * class. crypto::auth_enc_aes_gcm::make is the public interface for
+       * class. crypto::auth_dec_aes_gcm::make is the public interface for
        * creating new instances.
        */
       static sptr make(std::vector<uint8_t> key, int keylen, int ivlen);
@@ -52,5 +52,5 @@ namespace gr {
   } // namespace crypto
 } // namespace gr
 
-#endif /* INCLUDED_CRYPTO_AUTH_ENC_AES_GCM_H */
+#endif /* INCLUDED_CRYPTO_AUTH_DEC_AES_GCM_H */
 

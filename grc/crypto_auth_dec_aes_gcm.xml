@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-  <name>Authenticated AES-GCM Encryption</name>
-  <key>crypto_auth_enc_aes_gcm</key>
-  <category>OpenSSL</category>
+  <name>Authenticated AES-GCM Decryption</name>
+  <key>crypto_auth_dec_aes_gcm</key>
+  <category>crypto</category>
   <import>import crypto</import>
-  <make>crypto.auth_enc_aes_gcm($key, $keylen, $ivlen)</make>
+  <make>crypto.auth_dec_aes_gcm($key, $keylen, $ivlen)</make>
 
   <param>
     <name>key</name>
@@ -38,4 +38,5 @@
     <type>message</type>
     <optional>1</optional>
   </source>
+
 </block>

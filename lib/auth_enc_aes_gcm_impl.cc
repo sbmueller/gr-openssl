@@ -64,14 +64,16 @@ namespace gr {
             d_pdu_ctr = 0;
 
             message_port_register_out(pmt::mp("pdus"));
-            message_port_register_in(pmt::mp("pdus_data"));
-            set_msg_handler(pmt::mp("pdus_data"), boost::bind(&auth_enc_aes_gcm_impl::msg_handler_data, this, _1));
+            message_port_register_in(pmt::mp("pdus"));
+            set_msg_handler(pmt::mp("pdus"), boost::bind(&auth_enc_aes_gcm_impl::msg_handler, this, _1));
 
             d_iv.assign(d_ciph->iv_len, 0);
             d_ivlen = ivlen;
             d_key = key;
 
-            init_ciph_ctx();
+            d_ciph_ctx = EVP_CIPHER_CTX_new();
+            init_ctx();
+
         }
 
 
@@ -84,7 +86,7 @@ namespace gr {
 
 
         void
-        auth_enc_aes_gcm_impl::msg_handler_data(pmt::pmt_t msg)
+        auth_enc_aes_gcm_impl::msg_handler(pmt::pmt_t msg)
         {
             //check PDU
             if (!pmt::is_pair(msg)) {
@@ -98,6 +100,22 @@ namespace gr {
             }
             else if (!pmt::is_dict(meta)) {
                 throw std::runtime_error("auth_enc_aes_gcm received non PDU input");
+            }
+
+            //add aad data for signing
+            if (pmt::dict_has_key(meta, d_aad_id) && pmt::is_u8vector(pmt::dict_ref(meta, d_aad_id, pmt::PMT_NIL))) {
+                pmt::pmt_t aad_data = pmt::dict_ref(meta, d_aad_id, pmt::PMT_F);
+                size_t inlen = pmt::length(aad_data);
+                const unsigned char *in = u8vector_elements(aad_data, inlen);
+
+                int nout=0;
+                if(1 != EVP_EncryptUpdate(d_ciph_ctx, NULL, &nout, in, inlen)){
+                    ERR_print_errors_fp(stdout);
+                }
+                //no output here expected
+                if(nout){
+                    throw std::runtime_error("auth_enc_aes_gcm something unexpected happened, encryption error ?");
+                }
             }
 
             //data to encrypt
@@ -126,23 +144,6 @@ namespace gr {
                 throw std::runtime_error("auth_enc_aes_gcm pdu data field not byte vector with data");
             }
 
-
-            //add aad data for signing
-            if (pmt::dict_has_key(meta, d_aad_id)) {
-                pmt::pmt_t aad_data = pmt::dict_ref(meta, d_aad_id, pmt::PMT_F);
-                size_t inlen = pmt::length(aad_data);
-                const unsigned char *in = u8vector_elements(aad_data, inlen);
-
-                int nout=0;
-                if(1 != EVP_EncryptUpdate(d_ciph_ctx, NULL, &nout, in, inlen)){
-                    ERR_print_errors_fp(stdout);
-                }
-                //no output here expected
-                if(nout){
-                    throw std::runtime_error("auth_enc_aes_gcm something unexpected happened, encryption error ?");
-                }
-            }
-
             //final encryption requested, write tag in meta
             if (pmt::dict_has_key(meta, d_final_id)) {
 
@@ -163,7 +164,7 @@ namespace gr {
 
                 pmt::pmt_t tag = pmt::dict_add(meta, d_auth_tag_id, pmt::init_u8vector(16, d_out_buffer));
 
-                init_ciph_ctx();
+                init_ctx();
 
                 d_pdu_ctr = 0;
             }
@@ -175,7 +176,8 @@ namespace gr {
         }
 
         void
-        auth_enc_aes_gcm_impl::init_ciph_ctx(){
+        auth_enc_aes_gcm_impl::init_ctx(){
+
             //generate random iv
             if (1 != RAND_bytes(&d_iv[0], d_ciph->iv_len)){
                 ERR_print_errors_fp(stdout);

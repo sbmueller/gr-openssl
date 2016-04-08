@@ -33,7 +33,8 @@ list(APPEND crypto_sources
     sym_dec_impl.cc
     hash_impl.cc
     key.cc
-    auth_enc_aes_gcm_impl.cc)
+    auth_enc_aes_gcm_impl.cc
+    auth_dec_aes_gcm_impl.cc)
 
 
 set(crypto_sources "${crypto_sources}" PARENT_SCOPE)

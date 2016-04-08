@@ -29,5 +29,6 @@ install(FILES
     sym_dec.h
     hash.h
     key.h
-    auth_enc_aes_gcm.h DESTINATION include/crypto
+    auth_enc_aes_gcm.h
+    auth_dec_aes_gcm.h DESTINATION include/crypto
 )
