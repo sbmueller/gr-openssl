@@ -22,9 +22,8 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 
-# import crypto_swig as crypto
+import crypto_swig as crypto
 import numpy
-import crypto
 import pmt
 from time import sleep
 
