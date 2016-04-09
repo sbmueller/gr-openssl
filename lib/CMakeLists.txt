@@ -44,7 +44,7 @@ if(NOT crypto_sources)
 endif(NOT crypto_sources)
 
 add_library(gnuradio-crypto SHARED ${crypto_sources})
-target_link_libraries(gnuradio-crypto ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+target_link_libraries(gnuradio-crypto ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} ${OPENSSL_LIBRARIES})
 set_target_properties(gnuradio-crypto PROPERTIES DEFINE_SYMBOL "gnuradio_crypto_EXPORTS")
 
 if(APPLE)
